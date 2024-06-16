@@ -1,3 +1,4 @@
+import api from "@/config/axios";
 import { removeEmptyAttributes } from "@/utils";
 import QueryString from "qs";
 

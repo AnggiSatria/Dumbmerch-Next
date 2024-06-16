@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{js,jsx}',
-    './components/**/*.{js,jsx}',
-    './app/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx}",
   ],
   prefix: "",
   theme: {
@@ -51,6 +51,15 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        primary: "#010E80",
+        primaryHq: "#296CE6",
+        secondary: "#787777",
+        black: "#1D1A1A",
+        darkNavy: "#14184B",
+        greyHQ: "#A1A0A0",
+        lightHQ: "#303EF7",
+        greyHq: "#534F4F",
+        superLightHq: "#296CE6",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -71,7 +80,23 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      background: {
+        primary: "#010E80",
+        primaryHq: "#296CE6",
+        secondary: "#787777",
+        black: "#1D1A1A",
+        darkNavy: "#14184B",
+        greyHQ: "#A1A0A0",
+        lightHQ: "#303EF7",
+        greyHq: "#534F4F",
+        superLightHq: "#296CE6",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

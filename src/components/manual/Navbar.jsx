@@ -1,5 +1,6 @@
 "use client";
 
+import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -140,6 +141,13 @@ export default function Navbar(props) {
               {dataNavigation?.map((item, index) => (
                 <Link key={index} href={item.href}>
                   <label
+                    onClick={() => {
+                      if (res?.value === "logout") {
+                        return Cookies.remove(`token`);
+                      } else {
+                        return "";
+                      }
+                    }}
                     className={`block px-3 py-2 rounded-md text-base font-medium ${
                       pathname === item.href
                         ? "text-[#F74D4D] bg-gray-700"

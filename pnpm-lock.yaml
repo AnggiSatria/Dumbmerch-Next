@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@arismun/format-rupiah':
+    specifier: ^3.0.0
+    version: 3.0.0
   '@fortawesome/react-fontawesome':
     specifier: ^0.2.2
     version: 0.2.2(@fortawesome/fontawesome-svg-core@6.5.2)(react@18.3.1)
@@ -106,6 +109,11 @@ packages:
   /@alloc/quick-lru@5.2.0:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
+
+  /@arismun/format-rupiah@3.0.0:
+    resolution: {integrity: sha512-vFlWQESLBVdWkFvx8oK42q7ul3HUniT4EGsSITHegv6cjxFrpL+U4efkHsK3MOT2qdXjXEK1vwfnglgOW/EzUQ==}
+    engines: {node: '>=10'}
+    dev: false
 
   /@babel/runtime@7.24.7:
     resolution: {integrity: sha512-UwgBRMjJP+xv857DCngvqXI3Iq6J4v0wXmwc6sapg+zyhbwmQX67LUEFrkK5tbyJ30jGuG3ZvWpBiB9LCy1kWw==}

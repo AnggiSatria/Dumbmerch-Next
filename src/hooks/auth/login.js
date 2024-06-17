@@ -64,39 +64,12 @@ export default function useAuth() {
   const onSubmit = async (e) => {
     try {
       setLoading(true);
-
-      console.log(e);
-      // user.handleGetUserLogged("pending", "");
-
-      // const response = await mutationLogin.mutateAsync(e);
-      // user.handleGetUserLogged("success", response?.data?.data?.slug);
-
-      // if (response?.data?.data?.role === "admin") {
-      //   setLoading(false);
-      //   toast.error(`You don't have permission to access this application.`);
-      // } else {
-      //   Cookies.set("token", response?.data?.data?.token);
-      //   setLoading(false);
-      //   if (response?.data?.data?.access?.length === 0) {
-      //     return (window.location.href = `/xplore-hq/${response?.data?.data?.slug}#create-pages`);
-      //   } else if (response?.data?.data?.access?.length > 1) {
-      //     return (window.location.href = `/xplore-hq/${response?.data?.data?.slug}/pick-company`);
-      //   } else {
-      //     return (window.location.href = `/xplore-hq/${
-      //       response?.data?.data?.slug
-      //     }/company/${response?.data?.data?.access?.map((res) => {
-      //       return res?.url;
-      //     })}/page/admin#general`);
-      //   }
-      // }
-
       if (condition === "login") {
         loginUser
           .mutateAsync(e)
           .then((res) => {
             const payload = res?.data?.data?.user;
             console.log(payload);
-            console.log(res);
             setLoading(false);
             if (payload?.status === "customer") {
               Cookies.set("token", payload?.token);
@@ -107,10 +80,9 @@ export default function useAuth() {
             }
           })
           .catch((err) => {
-            console.log(err);
             toast.error(
-              err && err?.response
-                ? err && err?.response?.data?.data?.message
+              err && err?.response?.data?.error?.message
+                ? err && err?.response?.data?.error?.message
                 : "Network Error, Please Check Again!"
             );
             setLoading(false);
@@ -119,26 +91,16 @@ export default function useAuth() {
         registerUser
           .mutateAsync(e)
           .then((res) => {
-            console.log(res);
             const payload = res?.data?.data?.user;
-            console.log(payload);
-            // if (payload?.status === "customer") {
-            //   Cookies.set("token", payload?.token);
-            //   router.push(`/${payload?.id}/home`);
-            // } else {
-            //   Cookies.set("token", payload?.token);
-            //   router.push(`/${payload?.id}/product`);
-            // }
             toast.success(`Register Successfully`);
             setCondition(`login`);
 
             setLoading(false);
           })
           .catch((err) => {
-            console.log(err);
             toast.error(
-              err && err?.response
-                ? err && err?.response?.data?.data?.message
+              err && err?.response?.data?.error?.message
+                ? err && err?.response?.data?.error?.message
                 : "Network Error, Please Check Again!"
             );
             setLoading(false);

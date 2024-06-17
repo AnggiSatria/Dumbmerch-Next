@@ -10,7 +10,7 @@ export const postProduct = (payload) => {
 
 export const getProducts = (activeFilter) => {
   const queryString = QueryString.parse(removeEmptyAttributes(activeFilter));
-  return api.get(`${handlers}/product`, { params: { ...queryString } });
+  return api.get(`${handlers}/products`, { params: { ...queryString } });
 };
 
 export const getProductById = (activeFilter, id) => {

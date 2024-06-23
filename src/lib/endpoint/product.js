@@ -5,7 +5,11 @@ import QueryString from "qs";
 const handlers = `/api/v1`;
 
 export const postProduct = (payload) => {
-  return api.post(`${handlers}/product/`, payload);
+  return api.post(`${handlers}/product/`, payload, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const getProducts = (activeFilter) => {
@@ -19,7 +23,11 @@ export const getProductById = (activeFilter, id) => {
 };
 
 export const patchProduct = (payload, id) => {
-  return api.put(`${handlers}/product/${id}`, payload);
+  return api.put(`${handlers}/product/${id}`, payload, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const deleteProduct = (id) => {

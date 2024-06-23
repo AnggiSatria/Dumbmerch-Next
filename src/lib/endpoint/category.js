@@ -5,23 +5,23 @@ import QueryString from "qs";
 const handlers = `/api/v1`;
 
 export const postCategory = (payload) => {
-  return api.post(`${handlers}/product/`, payload);
+  return api.post(`${handlers}/category/`, payload);
 };
 
 export const getCategories = (activeFilter) => {
   const queryString = QueryString.parse(removeEmptyAttributes(activeFilter));
-  return api.get(`${handlers}/product`, { params: { ...queryString } });
+  return api.get(`${handlers}/categories`, { params: { ...queryString } });
 };
 
 export const getCategoryById = (activeFilter, id) => {
   const queryString = QueryString.parse(removeEmptyAttributes(activeFilter));
-  return api.get(`${handlers}/product/${id}`, { params: { ...queryString } });
+  return api.get(`${handlers}/category/${id}`, { params: { ...queryString } });
 };
 
 export const patchCategory = (payload, id) => {
-  return api.put(`${handlers}/product/${id}`, payload);
+  return api.put(`${handlers}/category/${id}`, payload);
 };
 
 export const deleteCategory = (payload, id) => {
-  return api.delete(`${handlers}/product/${id}`, payload);
+  return api.delete(`${handlers}/category/${id}`, payload);
 };

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
 import Navbar from "@/components/manual/Navbar";
-import TabelData from "@/components/manual/table";
 import Pagination from "@/components/manual/pagination";
+import TableData from "@/components/manual/table";
+import { readCategories, readCheckAuth } from "@/hooks";
 import { usePathname } from "next/navigation";
-import { readCheckAuth, readProducts } from "@/hooks";
+import React, { useState } from "react";
 
-const Home = () => {
+export default function page() {
   const pathname = usePathname();
   const activeFilter = {
     keywords: "",
@@ -20,16 +20,18 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8; // Jumlah produk per halaman
 
-  const activeFilterProduct = {
+  const activeFilterCategory = {
     keywords: "",
   };
 
-  const { data: dataProducts, isLoading: loadingProducts } =
-    readProducts(activeFilterProduct);
+  const { data: dataCategories, isLoading: loadingCategories } =
+    readCategories(activeFilterCategory);
 
-  const listProducts = dataProducts && dataProducts?.data?.data;
+  console.log(dataCategories);
 
-  console.log(listProducts);
+  const listCategories = dataCategories && dataCategories?.data?.data;
+
+  console.log(listCategories);
 
   // if (isLoading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error.message}</p>;
@@ -83,21 +85,19 @@ const Home = () => {
         <h1 className="text-4xl font-bold mb-8 text-white text-center">
           Our Products
         </h1>
-        <TabelData
-          dataTd={listProducts?.products}
+        <TableData
+          dataTd={listCategories?.categories}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           dataTh={dataTh}
         />
         <Pagination
           productsPerPage={productsPerPage}
-          totalProducts={listProducts?.products?.length}
+          totalProducts={listCategories?.categories?.length}
           paginate={paginate}
           currentPage={currentPage}
         />
       </main>
     </div>
   );
-};
-
-export default Home;
+}

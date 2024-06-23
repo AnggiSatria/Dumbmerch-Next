@@ -1,5 +1,6 @@
 import {
   deleteCategory,
+  getCategories,
   getProductById,
   getProducts,
   patchCategory,
@@ -19,7 +20,7 @@ export const createCategory = () => {
 export const readCategories = (activeFilter) => {
   return useQuery({
     queryKey: ["categories", activeFilter],
-    queryFn: async () => await getProducts(activeFilter),
+    queryFn: async () => await getCategories(activeFilter),
     refetchOnWindowFocus: false,
     refetchOnmount: false,
     refetchOnReconnect: false,

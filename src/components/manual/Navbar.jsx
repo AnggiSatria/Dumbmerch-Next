@@ -31,7 +31,7 @@ export default function Navbar(props) {
           {
             name: "Complain",
             value: "complain",
-            href: `/${checkUsers?.id}/complaind-admin`,
+            href: `/${checkUsers?.id}/complain-admin`,
           },
           {
             name: "Category",

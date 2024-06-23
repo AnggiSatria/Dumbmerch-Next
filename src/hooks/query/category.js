@@ -41,7 +41,7 @@ export const readCategoryById = (activeFilter) => {
 
 export const updatedCategory = () => {
   const mutations = useMutation({
-    mutationFn: async (payload) => patchCategory(payload),
+    mutationFn: async ({ payload, id }) => patchCategory({ payload, id }),
     mutationKey: ["patch-category-by-id"],
   });
 
@@ -50,7 +50,7 @@ export const updatedCategory = () => {
 
 export const deletedCategory = () => {
   const mutations = useMutation({
-    mutationFn: async (payload) => deleteCategory(payload),
+    mutationFn: async (id) => deleteCategory(id),
     mutationKey: ["deleted-product"],
   });
 

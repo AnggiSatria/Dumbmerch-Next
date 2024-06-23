@@ -22,6 +22,6 @@ export const patchProduct = (payload, id) => {
   return api.put(`${handlers}/product/${id}`, payload);
 };
 
-export const deleteProduct = (payload, id) => {
-  return api.delete(`${handlers}/product/${id}`, payload);
+export const deleteProduct = (id) => {
+  return api.delete(`${handlers}/product/${id}`);
 };

@@ -3,11 +3,13 @@
 import Navbar from "@/components/manual/Navbar";
 import Pagination from "@/components/manual/pagination";
 import TableData from "@/components/manual/table";
+import { Button } from "@/components/ui/button";
 import { readCategories, readCheckAuth } from "@/hooks";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function page() {
+  const router = useRouter();
   const pathname = usePathname();
   const activeFilter = {
     keywords: "",
@@ -24,28 +26,22 @@ export default function page() {
     keywords: "",
   };
 
-  const { data: dataCategories, isLoading: loadingCategories } =
-    readCategories(activeFilterCategory);
-
-  console.log(dataCategories);
+  const {
+    data: dataCategories,
+    isLoading: loadingCategories,
+    refetch: refetchCategories,
+  } = readCategories(activeFilterCategory);
 
   const listCategories = dataCategories && dataCategories?.data?.data;
 
-  console.log(listCategories);
+  const [id, setId] = useState("");
 
-  // if (isLoading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error.message}</p>;
-
-  // const products = data.products;
-
-  const handleEdit = (product) => {
-    console.log(`Edit product with id: ${product.id}`);
-    // Tambahkan logika edit di sini
+  const handleEdit = (idCategory) => {
+    setId(idCategory);
   };
 
-  const handleDelete = (product) => {
-    console.log(`Delete product with id: ${product.id}`);
-    // Tambahkan logika delete di sini
+  const handleDelete = (idCategory) => {
+    setId(idCategory);
   };
 
   // Menentukan produk yang akan ditampilkan di halaman saat ini
@@ -61,16 +57,25 @@ export default function page() {
 
   const dataTh = [
     {
-      value: "Image",
-    },
-    {
       value: "Name",
     },
-    {
-      value: "Price",
-    },
+
     {
       value: "Actions",
+    },
+    {
+      value: (
+        <>
+          <Button
+            onClick={() => {
+              router.push(`/${checkUsers?.id}/category/add-category`);
+            }}
+            className="bg-[#F74D4D] text-white"
+          >
+            Add Category
+          </Button>
+        </>
+      ),
     },
   ];
 
@@ -83,13 +88,16 @@ export default function page() {
       />
       <main className="container mx-auto py-10">
         <h1 className="text-4xl font-bold mb-8 text-white text-center">
-          Our Products
+          Our Category
         </h1>
         <TableData
           dataTd={listCategories?.categories}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           dataTh={dataTh}
+          id={id}
+          refetchCategories={refetchCategories}
+          checkUsers={checkUsers}
         />
         <Pagination
           productsPerPage={productsPerPage}

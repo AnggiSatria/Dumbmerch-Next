@@ -18,10 +18,10 @@ export const getCategoryById = (activeFilter, id) => {
   return api.get(`${handlers}/category/${id}`, { params: { ...queryString } });
 };
 
-export const patchCategory = (payload, id) => {
-  return api.put(`${handlers}/category/${id}`, payload);
+export const patchCategory = ({ payload, id }) => {
+  return api.patch(`${handlers}/category/${id}`, payload);
 };
 
-export const deleteCategory = (payload, id) => {
-  return api.delete(`${handlers}/category/${id}`, payload);
+export const deleteCategory = (id) => {
+  return api.delete(`${handlers}/category/${id}`);
 };

@@ -4,11 +4,14 @@ import React, { useState } from "react";
 import Navbar from "@/components/manual/Navbar";
 import TabelData from "@/components/manual/table";
 import Pagination from "@/components/manual/pagination";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { readCheckAuth, readProducts } from "@/hooks";
+import { Dialog } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const Home = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const activeFilter = {
     keywords: "",
   };
@@ -24,25 +27,31 @@ const Home = () => {
     keywords: "",
   };
 
-  const { data: dataProducts, isLoading: loadingProducts } =
-    readProducts(activeFilterProduct);
+  const {
+    data: dataProducts,
+    isLoading: loadingProducts,
+    refetch: refetchProducts,
+  } = readProducts(activeFilterProduct);
 
   const listProducts = dataProducts && dataProducts?.data?.data;
 
-  console.log(listProducts);
+  // console.log(listProducts);
 
   // if (isLoading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error.message}</p>;
 
   // const products = data.products;
 
+  const [id, setId] = useState("");
+
   const handleEdit = (product) => {
     console.log(`Edit product with id: ${product.id}`);
     // Tambahkan logika edit di sini
   };
 
-  const handleDelete = (product) => {
-    console.log(`Delete product with id: ${product.id}`);
+  const handleDelete = (idProduct) => {
+    setId(idProduct);
+    console.log(`${idProduct}`);
     // Tambahkan logika delete di sini
   };
 
@@ -70,10 +79,24 @@ const Home = () => {
     {
       value: "Actions",
     },
+    {
+      value: (
+        <>
+          <Button
+            onClick={() => {
+              router.push(`/${checkUsers?.id}/product/add-product`);
+            }}
+            className="bg-[#F74D4D] text-white"
+          >
+            Add Product
+          </Button>
+        </>
+      ),
+    },
   ];
 
   return (
-    <div className="inline-flex min-h-screen items-center bg-[#0a0a0a] w-full justify-center flex-col">
+    <main className="inline-flex min-h-screen items-center bg-[#0a0a0a] w-full justify-center flex-col">
       <Navbar
         checkUsers={checkUsers}
         isLoading={isLoading}
@@ -84,10 +107,14 @@ const Home = () => {
           Our Products
         </h1>
         <TabelData
+          id={id}
           dataTd={listProducts?.products}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           dataTh={dataTh}
+          isProduct={true}
+          refetchProducts={refetchProducts}
+          checkUsers={checkUsers}
         />
         <Pagination
           productsPerPage={productsPerPage}
@@ -96,7 +123,7 @@ const Home = () => {
           currentPage={currentPage}
         />
       </main>
-    </div>
+    </main>
   );
 };
 

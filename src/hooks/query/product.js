@@ -49,7 +49,7 @@ export const updatedProduct = () => {
 
 export const deletedProduct = () => {
   const mutations = useMutation({
-    mutationFn: async (payload) => deleteProduct(payload),
+    mutationFn: async (id) => deleteProduct(id),
     mutationKey: ["deleted-product"],
   });
 

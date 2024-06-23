@@ -40,7 +40,7 @@ export const readProductById = (activeFilter, id) => {
 
 export const updatedProduct = () => {
   const mutations = useMutation({
-    mutationFn: async (payload) => patchProduct(payload),
+    mutationFn: async ({ payload, id }) => patchProduct({ payload, id }),
     mutationKey: ["patch-product-by-id"],
   });
 

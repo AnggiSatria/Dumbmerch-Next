@@ -22,8 +22,8 @@ export const getProductById = (activeFilter, id) => {
   return api.get(`${handlers}/product/${id}`, { params: { ...queryString } });
 };
 
-export const patchProduct = (payload, id) => {
-  return api.put(`${handlers}/product/${id}`, payload, {
+export const patchProduct = ({ payload, id }) => {
+  return api.patch(`${handlers}/product/${id}`, payload, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

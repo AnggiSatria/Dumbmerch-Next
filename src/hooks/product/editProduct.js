@@ -28,7 +28,6 @@ export default function useEditProduct() {
   const [idCategoryList, setIdCategoryList] = useState([]);
 
   const joinIdCategory = idCategoryList?.join(", ");
-  console.log(joinIdCategory);
 
   const activeFilter = {
     keywords: "",
@@ -100,7 +99,7 @@ export default function useEditProduct() {
       formData.set("desc", e.desc);
       formData.set("qty", e.qty);
       formData.set("price", e.price);
-      formData.set("idCategory", joinIdCategory);
+      formData.set("categoryId", joinIdCategory);
       formData.set("idUser", checkUsers?.id);
 
       const response = await mutations.mutateAsync({
@@ -134,5 +133,6 @@ export default function useEditProduct() {
     idCategoryList,
     setIdCategoryList,
     pathname,
+    idProduct,
   };
 }

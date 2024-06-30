@@ -14,12 +14,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { readCategories, readCheckAuth } from "@/hooks";
+import { readCategories, readCheckAuth, readProductById } from "@/hooks";
 import useAddProduct from "@/hooks/product/addProduct";
 import useEditProduct from "@/hooks/product/editProduct";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function page() {
   const {
@@ -31,7 +31,30 @@ export default function page() {
     setIdCategoryList,
     idCategoryList,
     pathname,
+    idProduct,
   } = useEditProduct();
+
+  console.log(idProduct);
+
+  const activeFilterProductById = {
+    keywords: "",
+  };
+
+  const { data: dataProductById } = readProductById(
+    activeFilterProductById,
+    idProduct
+  );
+
+  useEffect(() => {
+    form.setValue(`name`, dataProductById?.name);
+    form.setValue(`price`, dataProductById?.price);
+    form.setValue(`qty`, dataProductById?.qty);
+    form.setValue(`desc`, dataProductById?.desc);
+  }, [dataProductById]);
+
+  const productById = dataProductById && dataProductById?.data?.data;
+
+  console.log(productById);
 
   //   console.log(form.watch());
 

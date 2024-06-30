@@ -29,7 +29,7 @@ export const readProducts = (activeFilter) => {
 
 export const readProductById = (activeFilter, id) => {
   return useQuery({
-    queryKey: ["product-by-id", id],
+    queryKey: ["product-by-id", id, activeFilter],
     queryFn: async () => await getProductById(activeFilter, id),
     refetchOnWindowFocus: false,
     refetchOnmount: false,

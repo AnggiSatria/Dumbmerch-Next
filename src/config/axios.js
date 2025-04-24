@@ -2,10 +2,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.39:4000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "https://4d16-36-70-232-237.ngrok-free.app",
+    "Access-Control-Allow-Origin": "http://localhost:3000",
     "ngrok-skip-browser-warning": "true",
   },
 });

@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String       @id @default(uuid()) @db.Char(36)
+  email              String?
+  password           String?
+  name               String?
+  status             String?
+  profile            Profile?
+  products           Product[]
+  buyerTransactions  Transaction[] @relation("Buyer")
+  sellerTransactions Transaction[] @relation("Seller")
+  senderMessage      Chat[]        @relation("Sender")
+  recipientMessage   Chat[]        @relation("Recipient")
+}
+
+model Profile {
+  id      String  @id @default(uuid())
+  phone   String?
+  gender  String?
+  address String?
+  image   String?
+  idUser  String  @unique
+  user    User    @relation(fields: [idUser], references: [id])
+}
+
+model Product {
+  id           String            @id @default(uuid())
+  name         String
+  desc         String?
+  price        BigInt
+  image        String?
+  qty          Int              @default(0)
+  idUser       String
+  user         User             @relation(fields: [idUser], references: [id])
+  transactions Transaction[]
+  CategoryProduct CategoryProduct[] // Relasi many-to-many lewat model pivot
+}
+
+model Category {
+  id       String     @id @default(uuid())
+  name     String
+  CategoryProduct CategoryProduct[] // Relasi many-to-many lewat model pivot
+}
+
+
+model CategoryProduct {
+  id         String   @id @default(uuid())
+  idProduct  String
+  idCategory String
+
+  product    Product  @relation(fields: [idProduct], references: [id])
+  category   Category @relation(fields: [idCategory], references: [id])
+
+  @@unique([idProduct, idCategory])
+}
+
+model Chat {
+  id          String   @id @default(uuid())
+  message     String
+  idSender    String
+  idRecipient String
+  createdAt   DateTime @default(now())
+
+  sender      User     @relation("Sender", fields: [idSender], references: [id])
+  recipient   User     @relation("Recipient", fields: [idRecipient], references: [id])
+}
+
+model Transaction {
+  id        String  @id @default(uuid())
+  idProduct String?
+  idBuyer   String?
+  idSeller  String?
+  price     BigInt?
+  status    String?
+
+  product   Product? @relation(fields: [idProduct], references: [id])
+  buyer     User?    @relation("Buyer", fields: [idBuyer], references: [id])
+  seller    User?    @relation("Seller", fields: [idSeller], references: [id])
+}

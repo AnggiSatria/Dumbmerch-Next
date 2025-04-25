@@ -1,7 +1,7 @@
 import { getCheckAuth, postLogin, postRegister } from "@/lib";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const readCheckAuth = (activeFilter) => {
+export const useReadCheckAuth = (activeFilter) => {
   return useQuery({
     queryKey: ["check-auth", activeFilter],
     queryFn: async () => await getCheckAuth(activeFilter),
@@ -12,7 +12,7 @@ export const readCheckAuth = (activeFilter) => {
   });
 };
 
-export const createRegister = () => {
+export const useCreateRegister = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postRegister(payload),
     mutationKey: ["register"],
@@ -21,7 +21,7 @@ export const createRegister = () => {
   return { mutations };
 };
 
-export const createLogin = () => {
+export const useCreateLogin = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postLogin(payload),
     mutationKey: ["login"],

@@ -7,7 +7,7 @@ import {
 } from "@/lib";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const createProduct = () => {
+export const useCreateProduct = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postProduct(payload),
     mutationKey: ["create-product"],
@@ -16,7 +16,7 @@ export const createProduct = () => {
   return { mutations };
 };
 
-export const readProducts = (activeFilter) => {
+export const useReadProducts = (activeFilter) => {
   return useQuery({
     queryKey: ["products", activeFilter],
     queryFn: async () => await getProducts(activeFilter),
@@ -27,7 +27,7 @@ export const readProducts = (activeFilter) => {
   });
 };
 
-export const readProductById = (activeFilter, id) => {
+export const useReadProductById = (activeFilter, id) => {
   return useQuery({
     queryKey: ["product-by-id", id, activeFilter],
     queryFn: async () => await getProductById(activeFilter, id),
@@ -38,7 +38,7 @@ export const readProductById = (activeFilter, id) => {
   });
 };
 
-export const updatedProduct = () => {
+export const useUpdatedProduct = () => {
   const mutations = useMutation({
     mutationFn: async ({ payload, id }) => patchProduct({ payload, id }),
     mutationKey: ["patch-product-by-id"],
@@ -47,7 +47,7 @@ export const updatedProduct = () => {
   return { mutations };
 };
 
-export const deletedProduct = () => {
+export const useDeletedProduct = () => {
   const mutations = useMutation({
     mutationFn: async (id) => deleteProduct(id),
     mutationKey: ["deleted-product"],

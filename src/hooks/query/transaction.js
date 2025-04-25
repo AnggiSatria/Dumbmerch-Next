@@ -1,7 +1,7 @@
 import { getTransactions, postNotification, postTransaction } from "@/lib";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const readTransaction = (activeFilter) => {
+export const useReadTransaction = (activeFilter) => {
   return useQuery({
     queryKey: ["transactions", activeFilter],
     queryFn: async () => await getTransactions(activeFilter),
@@ -12,7 +12,7 @@ export const readTransaction = (activeFilter) => {
   });
 };
 
-export const createTransaction = () => {
+export const useCreateTransaction = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postTransaction(payload),
     mutationKey: ["transaction"],
@@ -21,7 +21,7 @@ export const createTransaction = () => {
   return { mutations };
 };
 
-export const createNotification = () => {
+export const useCreateNotification = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postNotification(payload),
     mutationKey: ["notification"],

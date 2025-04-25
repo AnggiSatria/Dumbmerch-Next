@@ -14,8 +14,9 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { deletedCategory, deletedProduct } from "@/hooks";
+import { useDeletedCategory, useDeletedProduct } from "@/hooks";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function TableData({
   id,
@@ -29,10 +30,9 @@ export default function TableData({
   checkUsers,
 }) {
   const router = useRouter();
-  const pathname = usePathname();
 
-  const { mutations: mutationsProducts } = deletedProduct();
-  const { mutations: mutationsCategory } = deletedCategory();
+  const { mutations: mutationsProducts } = useDeletedProduct();
+  const { mutations: mutationsCategory } = useDeletedCategory();
 
   return (
     <div className="overflow-x-auto">
@@ -55,10 +55,13 @@ export default function TableData({
                 {isProduct ? (
                   <>
                     <td className="px-4 py-2 border-b border-gray-200 flex justify-center">
-                      <img
+                      <Image
                         className="w-16 h-16 object-cover"
                         src={res?.image}
                         alt={res?.name}
+                        width={64}
+                        height={64}
+                        layout="responsive"
                       />
                     </td>
                     <td className="px-4 py-2 border-b border-gray-200 text-center">
@@ -106,11 +109,10 @@ export default function TableData({
                                     mutationsProducts
                                       .mutateAsync(id)
                                       .then((res) => {
-                                        console.log(res);
                                         refetchProducts();
                                       })
                                       .catch((err) => {
-                                        console.log(err);
+                                        console.error(err);
                                       });
                                   }}
                                 >
@@ -174,11 +176,10 @@ export default function TableData({
                                     mutationsCategory
                                       .mutateAsync(id)
                                       .then((res) => {
-                                        console.log(res);
                                         refetchCategories();
                                       })
                                       .catch((err) => {
-                                        console.log(err);
+                                        console.error(err);
                                       });
                                   }}
                                   className="bg-[#F74D4D] text-white"

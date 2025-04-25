@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createLogin, createRegister } from "../query";
+import { useCreateLogin, useCreateRegister } from "../query";
 import Cookies from "js-cookie";
 // import { createLogin } from "@/service";
 import { toast } from "react-hot-toast";
@@ -17,8 +17,8 @@ export default function useAuth() {
   const [loading, setLoading] = useState(false);
   const [condition, setCondition] = useState("login");
 
-  const { mutations: loginUser } = createLogin();
-  const { mutations: registerUser } = createRegister();
+  const { mutations: loginUser } = useCreateLogin();
+  const { mutations: registerUser } = useCreateRegister();
 
   const loginSchema = () => {
     switch (condition) {
@@ -69,14 +69,13 @@ export default function useAuth() {
           .mutateAsync(e)
           .then((res) => {
             const payload = res?.data?.data?.user;
-            console.log(payload);
             setLoading(false);
             if (payload?.status === "customer") {
               Cookies.set("token", payload?.token);
-              router.push(`/${payload?.id}/home`);
+              return window.location.href = `/${checkUsers?.id}/home`
             } else {
               Cookies.set("token", payload?.token);
-              router.push(`/${payload?.id}/product`);
+              return window.location.href = `/${checkUsers?.id}/product`
             }
           })
           .catch((err) => {

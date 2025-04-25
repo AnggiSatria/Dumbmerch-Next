@@ -1,11 +1,10 @@
 "use client";
 
-import { readCheckAuth, readProducts } from "@/hooks";
+import { useReadCheckAuth, useReadProducts } from "@/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -16,16 +15,16 @@ import {
 } from "@/components/ui/select";
 import { useDebounce } from "@uidotdev/usehooks";
 import Navbar from "@/components/manual/Navbar";
+import Cookies from "js-cookie";
 
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
-  console.log(pathname);
-
+  const token = Cookies.get(`token`);
   const activeFilter = {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading, isError } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -38,15 +37,26 @@ export default function page() {
   };
 
   const { data: dataProducts, isLoading: loadingProducts } =
-    readProducts(activeFilterProduct);
+    useReadProducts(activeFilterProduct);
 
   const getProducts = dataProducts && dataProducts?.data?.data?.products;
-
-  console.log(getProducts);
-
   const handleChange = (e) => {
     setKeyword(e.target.value);
   };
+
+    useEffect(() => {
+      if (!isLoading) {
+          if (isError) {
+            return window.location.href = `/`;
+          } else {
+            if (checkUsers?.status === "customer") {
+              return window.location.href = `/${checkUsers?.id}/home` 
+            } else {
+              return window.location.href = `/${checkUsers?.id}/product`
+            }
+          }
+      }
+    }, [token, checkUsers, isError]);
 
   return (
     <main className="w-full min-h-screen border border-white items-center flex py-5 flex-col gap-5">

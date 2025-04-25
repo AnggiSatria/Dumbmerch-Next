@@ -5,19 +5,11 @@ import * as Yup from "yup";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  createLogin,
-  createProduct,
-  createRegister,
-  readCheckAuth,
-  updatedProduct,
+  useReadCheckAuth,
+  useUpdatedProduct,
 } from "../query";
-import Cookies from "js-cookie";
-// import { createLogin } from "@/service";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-// import { useEffect } from "react";
-// import Cookies from "js-cookie";
-// import { useStoreUser } from "@/service/store/users";
 
 export default function useEditProduct() {
   //   const user = useStoreUser((state) => state);
@@ -33,7 +25,7 @@ export default function useEditProduct() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -86,13 +78,11 @@ export default function useEditProduct() {
     resolver: zodResolver(formSchema),
   });
 
-  const { mutations } = updatedProduct();
+  const { mutations } = useUpdatedProduct();
 
   const onSubmit = async (e) => {
     try {
       setLoading(true);
-
-      console.log(e);
       const formData = new FormData();
       formData.set("image", e.image, e.image.name);
       formData.set("name", e.name);
@@ -110,8 +100,6 @@ export default function useEditProduct() {
       if (response?.status === 200) {
         router.push(`/${checkUsers?.id}/product`);
       }
-      console.log(response);
-
       setLoading(false);
     } catch (error) {
       setLoading(false);

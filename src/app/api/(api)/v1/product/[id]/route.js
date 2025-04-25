@@ -87,12 +87,6 @@ export async function GET(_, { params }) {
 //   }
 // }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function PUT(req, { params }) {
   try {
     const id = parseInt(params.id);

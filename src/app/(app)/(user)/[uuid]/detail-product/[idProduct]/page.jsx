@@ -2,17 +2,16 @@
 
 import Navbar from "@/components/manual/Navbar";
 import { Button } from "@/components/ui/button";
-import api from "@/config/axios";
-import { createTransaction, readCheckAuth, readProductById } from "@/hooks";
+import { useCreateTransaction, useReadCheckAuth, useReadProductById } from "@/hooks";
 import Image from "next/image";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
   const idProducts = pathname?.split("/")?.[3];
   const params = useParams();
-  const { mutations: mutateTransations } = createTransaction();
+  const { mutations: mutateTransations } = useCreateTransaction();
   const router = useRouter();
   const id_product = params["idProduct"];
 
@@ -20,7 +19,7 @@ export default function page() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -28,7 +27,7 @@ export default function page() {
     keywords: "",
   };
 
-  const { data: productById, isLoading: loadingProductById } = readProductById(
+  const { data: productById, isLoading: loadingProductById } = useReadProductById(
     activeFilterProductById,
     idProducts
   );
@@ -40,8 +39,6 @@ export default function page() {
     const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
     //change this according to your client-key
     const myMidtransClientKey = process.env.MIDTRANS_CLIENT_KEY;
-
-    // console.log(myMidtransClientKey);
 
     let scriptTag = document.createElement("script");
     scriptTag.src = midtransScriptUrl;
@@ -62,29 +59,22 @@ export default function page() {
         idSeller: detailProductById.user?.id,
         price: detailProductById?.price,
       };
-
-      console.log(data);
-
       mutateTransations
         .mutateAsync(data)
         .then((res) => {
-          console.log(res);
           const token = res?.data?.payment?.token;
 
           window.snap.pay(token, {
             onSuccess: function (result) {
               /* You may add your own implementation here */
-              console.log(result);
               router.push(`/${checkUsers?.id}/profile`);
             },
             onPending: function (result) {
               /* You may add your own implementation here */
-              console.log(result);
               router.push(`/${checkUsers?.id}/profile`);
             },
             onError: function (result) {
               /* You may add your own implementation here */
-              console.log(result);
             },
             onClose: function () {
               /* You may add your own implementation here */
@@ -93,10 +83,10 @@ export default function page() {
           });
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

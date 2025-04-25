@@ -8,7 +8,7 @@ import {
 } from "@/lib";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const createCategory = () => {
+export const useCreateCategory = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postCategory(payload),
     mutationKey: ["create-category"],
@@ -17,7 +17,7 @@ export const createCategory = () => {
   return { mutations };
 };
 
-export const readCategories = (activeFilter) => {
+export const useReadCategories = (activeFilter) => {
   return useQuery({
     queryKey: ["categories", activeFilter],
     queryFn: async () => await getCategories(activeFilter),
@@ -28,7 +28,7 @@ export const readCategories = (activeFilter) => {
   });
 };
 
-export const readCategoryById = (activeFilter) => {
+export const useReadCategoryById = (activeFilter) => {
   return useQuery({
     queryKey: ["category-by-id", activeFilter],
     queryFn: async () => await getProductById(activeFilter),
@@ -39,7 +39,7 @@ export const readCategoryById = (activeFilter) => {
   });
 };
 
-export const updatedCategory = () => {
+export const useUpdatedCategory = () => {
   const mutations = useMutation({
     mutationFn: async ({ payload, id }) => patchCategory({ payload, id }),
     mutationKey: ["patch-category-by-id"],
@@ -48,10 +48,10 @@ export const updatedCategory = () => {
   return { mutations };
 };
 
-export const deletedCategory = () => {
+export const useDeletedCategory = () => {
   const mutations = useMutation({
     mutationFn: async (id) => deleteCategory(id),
-    mutationKey: ["deleted-product"],
+    mutationKey: ["deleted-category"],
   });
 
   return { mutations };

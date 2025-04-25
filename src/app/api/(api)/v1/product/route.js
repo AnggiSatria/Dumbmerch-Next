@@ -53,11 +53,6 @@ import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/auth";
 import { parseForm } from "@/lib/upload"; // ini dari lib kamu
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 export async function POST(req) {
   try {

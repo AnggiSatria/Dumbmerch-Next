@@ -6,7 +6,8 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const keyword = searchParams.get("keyword");
     const sort_by = searchParams.get("sort_by") || "name";
-    const order = searchParams.get("order")?.toUpperCase() || "ASC";
+    const orderParam = searchParams.get("order");
+    const order = orderParam === "desc" ? "desc" : "asc";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
@@ -19,23 +20,30 @@ export async function GET(req) {
         }
       : {};
 
-    const [products, count] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: { [sort_by]: order },
-        include: {
-          user: { select: { id: true, name: true, email: true } },
-          categories: {
-            include: {
-              category: true,
+      const [products, count] = await Promise.all([
+        prisma.product.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { [sort_by]: order },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            CategoryProduct: {
+              include: {
+                category: true,
+              },
             },
           },
-        },
       }),
       prisma.product.count({ where }),
     ]);
+
 
     const productsWithImage = products.map((p) => ({
       ...p,

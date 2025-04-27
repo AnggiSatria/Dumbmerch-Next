@@ -26,16 +26,12 @@
     "dayjs": "^1.11.11",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.395.0",
-<<<<<<< HEAD
-    "next": "14.2.4",
-=======
     "midtrans-client": "^1.4.2",
     "multer": "1.4.5-lts.2",
     "next": "15.3.1",
     "next-connect": "^0.12.2",
     "nodemailer": "^6.10.1",
     "prisma": "^6.6.0",
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
     "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18",

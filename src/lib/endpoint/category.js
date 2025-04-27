@@ -19,7 +19,7 @@ export const getCategoryById = (activeFilter, id) => {
 };
 
 export const patchCategory = ({ payload, id }) => {
-  return api.patch(`${handlers}/category/${id}`, payload);
+  return api.put(`${handlers}/category/${id}`, payload);
 };
 
 export const deleteCategory = (id) => {

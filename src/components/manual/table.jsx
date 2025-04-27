@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
 import { FormatRupiah } from "@arismun/format-rupiah";
 import {
@@ -29,10 +29,16 @@ export default function TableData({
   checkUsers,
 }) {
   const router = useRouter();
+<<<<<<< HEAD
   const pathname = usePathname();
 
   const { mutations: mutationsProducts } = deletedProduct();
   const { mutations: mutationsCategory } = deletedCategory();
+=======
+  const [open, setOpen] = useState(false)
+  const { mutations: mutationsProducts } = useDeletedProduct(refetchProducts, setOpen);
+  const { mutations: mutationsCategory } = useDeletedCategory(refetchCategories, setOpen);
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
   return (
     <div className="overflow-x-auto">
@@ -81,9 +87,10 @@ export default function TableData({
                           <PencilAltIcon className="h-5 w-5 mr-1" />
                           Edit
                         </Button>
-                        <Dialog>
+                        <Dialog open={open} onOpenChange={setOpen}>
                           <DialogTrigger
                             onClick={() => {
+                              setOpen(true)
                               handleDelete(res?.id);
                             }}
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded inline-flex items-center"
@@ -107,7 +114,10 @@ export default function TableData({
                                       .mutateAsync(id)
                                       .then((res) => {
                                         console.log(res);
+<<<<<<< HEAD
                                         refetchProducts();
+=======
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
                                       })
                                       .catch((err) => {
                                         console.log(err);
@@ -152,7 +162,7 @@ export default function TableData({
                           Edit
                         </Button>
 
-                        <Dialog>
+                        <Dialog open={open} onOpenChange={setOpen}>
                           <DialogTrigger
                             onClick={() => handleDelete(res?.id)}
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded inline-flex items-center"
@@ -175,7 +185,11 @@ export default function TableData({
                                       .mutateAsync(id)
                                       .then((res) => {
                                         console.log(res);
+<<<<<<< HEAD
                                         refetchCategories();
+=======
+                                        
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
                                       })
                                       .catch((err) => {
                                         console.log(err);

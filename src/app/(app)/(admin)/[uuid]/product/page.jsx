@@ -35,6 +35,7 @@ const Home = () => {
 
   const listProducts = dataProducts && dataProducts?.data?.data;
 
+<<<<<<< HEAD
   // console.log(listProducts);
 
   // if (isLoading) return <p>Loading...</p>;
@@ -42,6 +43,8 @@ const Home = () => {
 
   // const products = data.products;
 
+=======
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
   const [id, setId] = useState("");
 
   const handleEdit = (product) => {
@@ -95,8 +98,25 @@ const Home = () => {
     },
   ];
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+      if (isLoading) return;
+  
+      if (token === undefined) {
+        return window.location.href = `/`
+      } else {
+          if (checkUsers?.status === "customer") {
+          return router.push(`/${checkUsers?.id}/home`) 
+        } else {
+          return router.push(`/${checkUsers?.id}/product`)
+        }
+      }
+    }, [token, checkUsers]);
+
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
   return (
-    <main className="inline-flex min-h-screen items-center bg-[#0a0a0a] w-full justify-center flex-col">
+    <main className="inline-flex min-h-screen items-center bg-[#0a0a0a] w-full flex-col">
       <Navbar
         checkUsers={checkUsers}
         isLoading={isLoading}

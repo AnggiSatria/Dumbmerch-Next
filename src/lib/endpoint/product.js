@@ -23,7 +23,7 @@ export const getProductById = (activeFilter, id) => {
 };
 
 export const patchProduct = ({ payload, id }) => {
-  return api.patch(`${handlers}/product/${id}`, payload, {
+  return api.put(`${handlers}/product/${id}`, payload, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

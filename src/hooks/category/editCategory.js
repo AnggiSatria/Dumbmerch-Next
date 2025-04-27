@@ -87,5 +87,7 @@ export default function useEditCategory() {
     loading,
     checkUsers,
     isLoading,
+    pathname,
+    idCategory,
   };
 }

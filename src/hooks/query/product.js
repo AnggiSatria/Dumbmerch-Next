@@ -41,16 +41,24 @@ export const readProductById = (activeFilter, id) => {
 export const updatedProduct = () => {
   const mutations = useMutation({
     mutationFn: async ({ payload, id }) => patchProduct({ payload, id }),
-    mutationKey: ["patch-product-by-id"],
+    mutationKey: ["put-product-by-id"],
   });
 
   return { mutations };
 };
 
+<<<<<<< HEAD
 export const deletedProduct = () => {
+=======
+export const useDeletedProduct = (refetchProducts, setOpen) => {
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
   const mutations = useMutation({
     mutationFn: async (id) => deleteProduct(id),
     mutationKey: ["deleted-product"],
+    onSuccess: () => {
+      refetchProducts()
+      setOpen(false)
+    }
   });
 
   return { mutations };

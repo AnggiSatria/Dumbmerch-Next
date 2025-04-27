@@ -4,8 +4,13 @@ import Navbar from "@/components/manual/Navbar";
 import Pagination from "@/components/manual/pagination";
 import TableData from "@/components/manual/table";
 import { Button } from "@/components/ui/button";
+<<<<<<< HEAD
 import { readCategories, readCheckAuth } from "@/hooks";
 import { usePathname, useRouter } from "next/navigation";
+=======
+import { useReadCategories, useReadCheckAuth } from "@/hooks";
+import { useParams, usePathname, useRouter } from "next/navigation";
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
 import React, { useState } from "react";
 
 export default function page() {
@@ -14,6 +19,8 @@ export default function page() {
   const activeFilter = {
     keywords: "",
   };
+  const lastSegment = pathname.split('/').pop();
+  
 
   const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
 
@@ -80,7 +87,7 @@ export default function page() {
   ];
 
   return (
-    <div className="inline-flex min-h-screen items-center bg-[#0a0a0a] w-full justify-center flex-col">
+    <div className={`inline-flex min-h-screen items-center bg-[#0a0a0a] w-full flex-col ${lastSegment === "product" || lastSegment === "category" ? `` : `justify-center`}`}>
       <Navbar
         checkUsers={checkUsers}
         isLoading={isLoading}

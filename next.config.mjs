@@ -10,8 +10,11 @@ const nextConfig = {
       "192.168.1.13",
       "b65f-36-70-110-159",
       "b65f-36-70-110-159.ngrok-free.app",
-      "http://localhost:5000/uploads",
+      "http://localhost:3000/uploads",
     ],
+  },
+  experimental: {
+    appDir: true, // ← Tambahkan ini supaya Next.js tahu kamu pakai App Router!
   },
 };
 

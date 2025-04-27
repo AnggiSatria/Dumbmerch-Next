@@ -45,14 +45,15 @@ export default function page() {
     idProduct
   );
 
+  const productById = dataProductById && dataProductById?.data?.data;
+  
   useEffect(() => {
-    form.setValue(`name`, dataProductById?.name);
-    form.setValue(`price`, dataProductById?.price);
-    form.setValue(`qty`, dataProductById?.qty);
-    form.setValue(`desc`, dataProductById?.desc);
+    form.setValue(`name`, productById?.name);
+    form.setValue(`price`, productById?.price);
+    form.setValue(`qty`, productById?.qty);
+    form.setValue(`desc`, productById?.desc);
   }, [dataProductById]);
 
-  const productById = dataProductById && dataProductById?.data?.data;
 
   console.log(productById);
 

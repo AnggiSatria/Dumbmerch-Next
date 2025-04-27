@@ -11,15 +11,44 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useReadCategoryById } from "@/hooks";
 import useEditCategory from "@/hooks/category/editCategory";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
+<<<<<<< HEAD
 export default function page() {
   const pathname = usePathname();
   const { form, onSubmit, loading, checkUsers, isLoading } = useEditCategory();
+=======
+export default function Page() {
+    const {
+      form,
+      onSubmit,
+      loading,
+      checkUsers,
+      isLoading,
+      pathname,
+      idCategory,
+    } = useEditCategory();
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
+    const activeFilterCategoryById = {
+      keywords: "",
+    };
+
+  const { data: dataCategoryById } = useReadCategoryById(
+      activeFilterCategoryById,
+      idCategory
+  );
+  
+  const categoryById = dataCategoryById && dataCategoryById?.data?.data?.category;
+
+  useEffect(() => {
+    form.setValue(`name`, categoryById?.name);
+  }, [dataCategoryById]);
+    
   return (
     <main className="w-full min-h-screen flex flex-col items-center py-5 gap-5 border border-white">
       <Toaster />

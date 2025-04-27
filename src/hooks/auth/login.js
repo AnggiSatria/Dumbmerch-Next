@@ -67,6 +67,7 @@ export default function useAuth() {
       if (condition === "login") {
         loginUser
           .mutateAsync(e)
+<<<<<<< HEAD
           .then((res) => {
             const payload = res?.data?.data?.user;
             console.log(payload);
@@ -77,7 +78,18 @@ export default function useAuth() {
             } else {
               Cookies.set("token", payload?.token);
               router.push(`/${payload?.id}/product`);
+=======
+          .then(({ data }) => {
+            const user = data?.data?.user;
+            if (!user?.id) {
+              toast.error("User ID tidak ditemukan!");
+              return;
+>>>>>>> 76b2d72 (feat(developement-be): add profile update)
             }
+            Cookies.set("token", user?.token);
+            window.location.href = user?.status === "customer"
+              ? `/${user?.id}/home`
+              : `/${user?.id}/product`;
           })
           .catch((err) => {
             toast.error(
@@ -90,8 +102,7 @@ export default function useAuth() {
       } else {
         registerUser
           .mutateAsync(e)
-          .then((res) => {
-            const payload = res?.data?.data?.user;
+          .then(() => {
             toast.success(`Register Successfully`);
             setCondition(`login`);
 

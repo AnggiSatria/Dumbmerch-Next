@@ -3,9 +3,8 @@
 import { readCheckAuth, readProducts } from "@/hooks";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,8 +18,8 @@ import Navbar from "@/components/manual/Navbar";
 
 export default function page() {
   const pathname = usePathname();
-  console.log(pathname);
-
+  const token = Cookies.get(`token`);
+  const router = useRouter()
   const activeFilter = {
     keywords: "",
   };
@@ -47,6 +46,20 @@ export default function page() {
   const handleChange = (e) => {
     setKeyword(e.target.value);
   };
+
+   useEffect(() => {
+    if (isLoading) return;
+
+    if (token === undefined) {
+      return window.location.href = `/`
+    } else {
+        if (checkUsers?.status === "customer") {
+        return router.push(`/${checkUsers?.id}/home`) 
+      } else {
+        return router.push(`/${checkUsers?.id}/product`)
+      }
+    }
+  }, [token, checkUsers]);
 
   return (
     <main className="w-full min-h-screen border border-white items-center flex py-5 flex-col gap-5">
@@ -83,7 +96,7 @@ export default function page() {
             >
               <div className="flex w-full h-[400px] lg:h-[300px] px-3 py-3 rounded-t-md">
                 <Image
-                  className="rounded-t-md"
+                  className="rounded-t-md object-cover w-full h-full"
                   layout="responsive"
                   alt="dumbmerch.png"
                   src={res?.image}

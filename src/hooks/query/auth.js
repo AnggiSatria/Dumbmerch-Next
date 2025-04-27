@@ -8,7 +8,7 @@ export const readCheckAuth = (activeFilter) => {
     refetchOnWindowFocus: false,
     refetchOnmount: false,
     refetchOnReconnect: false,
-    retry: false,
+    retry: false
   });
 };
 

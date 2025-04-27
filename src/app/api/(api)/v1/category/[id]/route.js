@@ -1,15 +1,12 @@
-// app/api/category/[id]/route.js
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req, { params }) {
-  const { id } = params;
-
+export async function GET(_, { params }) {
   try {
     const category = await prisma.category.findUnique({
-      where: { id },
+      where: { id: parseInt(params.id) },
+      select: { id: true, name: true },
     });
 
     if (!category) {
@@ -33,33 +30,25 @@ export async function GET(req, { params }) {
 }
 
 export async function PUT(req, { params }) {
-  const { id } = params;
-
   try {
     const body = await req.json();
-
-    const updatedCategory = await prisma.category.update({
-      where: { id },
-      data: {
-        name: body.name,
-      },
+    const updated = await prisma.category.update({
+      where: { id: parseInt(params.id) },
+      data: { name: body.name },
     });
 
     return Response.json({
       status: "success",
-      data: { category: updatedCategory },
+      data: { category: updated },
     });
   } catch (error) {
     console.error(error);
-
-    // Error handling kalau id tidak ditemukan
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return Response.json(
         { status: "failed", message: "Category not found" },
         { status: 404 }
       );
     }
-
     return Response.json(
       { status: "failed", message: "Server error" },
       { status: 500 }
@@ -67,29 +56,24 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
-  const { id } = params;
-
+export async function DELETE(_, { params }) {
   try {
     await prisma.category.delete({
-      where: { id },
+      where: { id: parseInt(params.id) },
     });
 
     return Response.json({
       status: "success",
-      message: "Category deleted successfully",
+      data: { id: parseInt(params.id) },
     });
   } catch (error) {
     console.error(error);
-
-    // Error handling kalau id tidak ditemukan
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return Response.json(
         { status: "failed", message: "Category not found" },
         { status: 404 }
       );
     }
-
     return Response.json(
       { status: "failed", message: "Server error" },
       { status: 500 }

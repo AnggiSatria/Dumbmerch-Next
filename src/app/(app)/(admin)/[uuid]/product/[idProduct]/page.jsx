@@ -14,14 +14,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { readCategories, readCheckAuth, readProductById } from "@/hooks";
-import useAddProduct from "@/hooks/product/addProduct";
+import { useReadCategories, useReadProductById } from "@/hooks";
 import useEditProduct from "@/hooks/product/editProduct";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
 import React, { useEffect } from "react";
 
-export default function page() {
+export default function Page() {
   const {
     form,
     onSubmit,
@@ -34,13 +32,11 @@ export default function page() {
     idProduct,
   } = useEditProduct();
 
-  console.log(idProduct);
-
   const activeFilterProductById = {
     keywords: "",
   };
 
-  const { data: dataProductById } = readProductById(
+  const { data: dataProductById } = useReadProductById(
     activeFilterProductById,
     idProduct
   );
@@ -55,10 +51,6 @@ export default function page() {
   }, [dataProductById]);
 
 
-  console.log(productById);
-
-  //   console.log(form.watch());
-
   const activeFilterCategory = {
     keywords: "",
   };
@@ -67,7 +59,7 @@ export default function page() {
     data: dataCategories,
     isLoading: loadingCategories,
     refetch: refetchCategories,
-  } = readCategories(activeFilterCategory);
+  } = useReadCategories(activeFilterCategory);
 
   const listCategories =
     dataCategories && dataCategories?.data?.data?.categories;
@@ -130,9 +122,13 @@ export default function page() {
           {form.watch().image === "" ? (
             ""
           ) : (
-            <img
+            <Image
               src={URL.createObjectURL(form.watch().image)}
-              className="w-[150px] h-[150px] rounded-md"
+              className="w-[150px] h-[150px] rounded-md object-cover"
+              width={150}
+              height={150}
+              layout="responsive"
+              alt="ex-image"
             />
           )}
 
@@ -178,8 +174,6 @@ export default function page() {
             render={({ field: { value, onChange, ...fieldProps } }) => (
               <>
                 {listCategories?.map((res, idx) => {
-                  console.log();
-
                   return (
                     <FormItem
                       key={idx}
@@ -191,8 +185,6 @@ export default function page() {
                           className="bg-white"
                           checked={value}
                           onCheckedChange={(e) => {
-                            console.log(e);
-                            console.log(res?.id);
                             if (e) {
                               setIdCategoryList(
                                 idCategoryList?.concat(res?.id)

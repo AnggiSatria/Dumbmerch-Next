@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"; // pastikan file prisma.js ada
 import Joi from "joi";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -34,24 +34,12 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // CREATE User + Profile secara bersamaan
     const newUser = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
         password: hashedPassword,
         status: data.status,
-        profile: {
-          create: {
-            phone: null,
-            gender: null,
-            address: null,
-            image: null,
-          },
-        },
-      },
-      include: {
-        profile: true,
       },
     });
 
@@ -71,7 +59,6 @@ export async function POST(req) {
           name: newUser.name,
           email: newUser.email,
           token,
-          profile: newUser.profile, // kalau mau kirim data profile juga
         },
       },
     });

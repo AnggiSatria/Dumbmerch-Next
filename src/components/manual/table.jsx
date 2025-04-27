@@ -14,8 +14,9 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { deletedCategory, deletedProduct } from "@/hooks";
+import { useDeletedCategory, useDeletedProduct } from "@/hooks";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function TableData({
   id,
@@ -29,16 +30,9 @@ export default function TableData({
   checkUsers,
 }) {
   const router = useRouter();
-<<<<<<< HEAD
-  const pathname = usePathname();
 
-  const { mutations: mutationsProducts } = deletedProduct();
-  const { mutations: mutationsCategory } = deletedCategory();
-=======
-  const [open, setOpen] = useState(false)
-  const { mutations: mutationsProducts } = useDeletedProduct(refetchProducts, setOpen);
-  const { mutations: mutationsCategory } = useDeletedCategory(refetchCategories, setOpen);
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
+  const { mutations: mutationsProducts } = useDeletedProduct();
+  const { mutations: mutationsCategory } = useDeletedCategory();
 
   return (
     <div className="overflow-x-auto">
@@ -61,10 +55,13 @@ export default function TableData({
                 {isProduct ? (
                   <>
                     <td className="px-4 py-2 border-b border-gray-200 flex justify-center">
-                      <img
+                      <Image
                         className="w-16 h-16 object-cover"
                         src={res?.image}
                         alt={res?.name}
+                        width={64}
+                        height={64}
+                        layout="responsive"
                       />
                     </td>
                     <td className="px-4 py-2 border-b border-gray-200 text-center">
@@ -113,14 +110,12 @@ export default function TableData({
                                     mutationsProducts
                                       .mutateAsync(id)
                                       .then((res) => {
-                                        console.log(res);
-<<<<<<< HEAD
                                         refetchProducts();
 =======
 >>>>>>> 76b2d72 (feat(developement-be): add profile update)
                                       })
                                       .catch((err) => {
-                                        console.log(err);
+                                        console.error(err);
                                       });
                                   }}
                                 >
@@ -184,15 +179,13 @@ export default function TableData({
                                     mutationsCategory
                                       .mutateAsync(id)
                                       .then((res) => {
-                                        console.log(res);
-<<<<<<< HEAD
                                         refetchCategories();
 =======
                                         
 >>>>>>> 76b2d72 (feat(developement-be): add profile update)
                                       })
                                       .catch((err) => {
-                                        console.log(err);
+                                        console.error(err);
                                       });
                                   }}
                                   className="bg-[#F74D4D] text-white"

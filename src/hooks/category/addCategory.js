@@ -4,17 +4,10 @@ import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  createCategory,
-  createLogin,
-  createRegister,
-  readCheckAuth,
+  useCreateCategory,
+  useReadCheckAuth,
 } from "../query";
-import Cookies from "js-cookie";
-// import { createLogin } from "@/service";
 import { toast } from "react-hot-toast";
-// import { useEffect } from "react";
-// import Cookies from "js-cookie";
-// import { useStoreUser } from "@/service/store/users";
 
 export default function useAddCategory() {
   //   const user = useStoreUser((state) => state);
@@ -25,11 +18,11 @@ export default function useAddCategory() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
-  const { mutations: addCategory } = createCategory();
+  const { mutations: addCategory } = useCreateCategory();
 
   const formSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -53,7 +46,7 @@ export default function useAddCategory() {
           router.push(`/${checkUsers?.id}/category`);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
 
           toast.error(
             err && err?.response

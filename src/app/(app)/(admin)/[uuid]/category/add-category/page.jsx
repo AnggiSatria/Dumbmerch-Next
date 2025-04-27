@@ -11,12 +11,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { readCheckAuth } from "@/hooks";
 import useAddCategory from "@/hooks/category/addCategory";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
 
   const { form, onSubmit, loading, checkUsers, isLoading } = useAddCategory();

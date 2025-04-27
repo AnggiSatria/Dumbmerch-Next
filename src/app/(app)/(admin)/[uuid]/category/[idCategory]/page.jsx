@@ -17,8 +17,7 @@ import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
-<<<<<<< HEAD
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
   const { form, onSubmit, loading, checkUsers, isLoading } = useEditCategory();
 =======

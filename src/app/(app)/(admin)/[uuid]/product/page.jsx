@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/manual/Navbar";
 import TabelData from "@/components/manual/table";
 import Pagination from "@/components/manual/pagination";
 import { usePathname, useRouter } from "next/navigation";
-import { readCheckAuth, readProducts } from "@/hooks";
-import { Dialog } from "@/components/ui/dialog";
+import { useReadCheckAuth, useReadProducts } from "@/hooks";
 import { Button } from "@/components/ui/button";
+import Cookies from "js-cookie";
 
 const Home = () => {
   const pathname = usePathname();
+  const token = Cookies.get(`token`);
   const router = useRouter();
   const activeFilter = {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading, isError } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -31,12 +32,9 @@ const Home = () => {
     data: dataProducts,
     isLoading: loadingProducts,
     refetch: refetchProducts,
-  } = readProducts(activeFilterProduct);
+  } = useReadProducts(activeFilterProduct);
 
   const listProducts = dataProducts && dataProducts?.data?.data;
-
-<<<<<<< HEAD
-  // console.log(listProducts);
 
   // if (isLoading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error.message}</p>;
@@ -48,13 +46,11 @@ const Home = () => {
   const [id, setId] = useState("");
 
   const handleEdit = (product) => {
-    console.log(`Edit product with id: ${product.id}`);
     // Tambahkan logika edit di sini
   };
 
   const handleDelete = (idProduct) => {
     setId(idProduct);
-    console.log(`${idProduct}`);
     // Tambahkan logika delete di sini
   };
 
@@ -98,23 +94,20 @@ const Home = () => {
     },
   ];
 
-<<<<<<< HEAD
-=======
-  useEffect(() => {
-      if (isLoading) return;
-  
-      if (token === undefined) {
-        return window.location.href = `/`
-      } else {
-          if (checkUsers?.status === "customer") {
-          return router.push(`/${checkUsers?.id}/home`) 
-        } else {
-          return router.push(`/${checkUsers?.id}/product`)
+      useEffect(() => {
+        if (!isLoading) {
+            if (isError) {
+              return window.location.href = `/`;
+            } else {
+              if (checkUsers?.status === "customer") {
+                return window.location.href = `/${checkUsers?.id}/home` 
+              } else {
+                return window.location.href = `/${checkUsers?.id}/product`
+              }
+            }
         }
-      }
-    }, [token, checkUsers]);
+      }, [token, checkUsers, isError]);
 
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
   return (
     <main className="inline-flex min-h-screen items-center bg-[#0a0a0a] w-full flex-col">
       <Navbar

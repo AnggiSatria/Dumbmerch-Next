@@ -1,101 +1,98 @@
-import { getTokenFromCookie } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+// import { NextResponse } from "next/server";
+// import { prisma } from "@/lib/prisma";
+// import { getTokenFromCookie } from "@/lib/auth"; // fungsi custom ambil user
 
-// Helper buat ubah semua BigInt di object jadi String
-function serialize(obj) {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj === 'bigint') return obj.toString();
-  if (Array.isArray(obj)) return obj.map(serialize);
-  if (typeof obj === 'object') {
-    const serializedObj = {};
-    for (const key in obj) {
-      serializedObj[key] = serialize(obj[key]);
-    }
-    return serializedObj;
-  }
-  return obj;
-}
+// export async function POST(req) {
+//   try {
+//     const formData = await req.formData();
+//     const image = formData.get("image"); // nama file
+//     const idCategory = formData.get("idCategory").split(",");
+//     const token = getTokenFromCookie(req); // ambil idUser dari cookie
+//     const userId = token.id;
+
+//     const newProduct = await prisma.product.create({
+//       data: {
+//         name: formData.get("name"),
+//         desc: formData.get("desc"),
+//         price: parseInt(formData.get("price")),
+//         image: image.name, // pastikan image sudah diupload
+//         qty: parseInt(formData.get("qty")),
+//         idUser: userId,
+//         categories: {
+//           create: idCategory.map((idCat) => ({
+//             category: { connect: { id: parseInt(idCat) } },
+//           })),
+//         },
+//       },
+//       include: {
+//         user: { select: { id: true, name: true, email: true } },
+//         categories: {
+//           include: {
+//             category: true,
+//           },
+//         },
+//       },
+//     });
+
+//     return NextResponse.json({
+//       status: "success",
+//       data: {
+//         ...newProduct,
+//         image: process.env.PATH_FILE + newProduct.image,
+//       },
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
+//   }
+// }
+
+
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getTokenFromCookie } from "@/lib/auth";
+import { parseForm } from "@/lib/upload"; // ini dari lib kamu
+
 
 export async function POST(req) {
   try {
-    const formData = await req.formData();
-    const name = formData.get("name");
-    const desc = formData.get("desc");
-    const price = parseInt(formData.get("price"));
-    const qty = parseInt(formData.get("qty"));
-    const idCategory = formData.get("idCategory"); // format: "id1,id2,id3"
-    const imageFile = formData.get("image");
-
-    const token = await getTokenFromCookie();
-    if (!token) {
-      return NextResponse.json({ status: "failed", message: "Unauthorized" }, { status: 401 });
-    }
-
+    const { fields, files } = await parseForm(req);
+    const token = getTokenFromCookie(req);
     const userId = token.id;
-    if (!userId) {
-      return NextResponse.json({ status: "failed", message: "Invalid token" }, { status: 401 });
-    }
 
-    let image = "";
-    if (imageFile) {
-      const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const categories = fields.idCategory?.split(",").map((id) => parseInt(id)) || [];
 
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-
-      const timestamp = Date.now();
-      const ext = path.extname(imageFile.name);
-      const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
-      const filePath = path.join(uploadsDir, safeName);
-
-      fs.writeFileSync(filePath, buffer);
-      image = safeName;
-    }
-
-    const categoriesArray = idCategory
-      ? idCategory.split(",").map((catId) => ({
-          idCategory: catId,
-        }))
-      : [];
+    const fileName = files.image[0].newFilename;
 
     const product = await prisma.product.create({
       data: {
-        name,
-        desc,
-        price: BigInt(price),
-        qty,
-        image,
+        name: fields.name,
+        desc: fields.desc,
+        price: parseInt(fields.price),
+        qty: parseInt(fields.qty),
+        image: fileName,
         idUser: userId,
-        CategoryProduct: {
-          create: categoriesArray,
+        categories: {
+          create: categories.map((catId) => ({
+            category: { connect: { id: catId } },
+          })),
         },
       },
       include: {
         user: true,
-        CategoryProduct: {
-          include: {
-            category: true,
-          },
-        },
+        categories: { include: { category: true } },
       },
     });
-
-    const serializedProduct = serialize(product);
 
     return NextResponse.json({
       status: "success",
       data: {
-        ...serializedProduct,
-        image: `${process.env.PATH_FILE}${serializedProduct.image}`,
+        ...product,
+        image: `${process.env.PATH_FILE}${product.image}`,
       },
     });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
   }
 }

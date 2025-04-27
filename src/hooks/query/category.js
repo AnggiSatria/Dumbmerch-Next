@@ -7,7 +7,7 @@ import {
 } from "@/lib";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const createCategory = () => {
+export const useCreateCategory = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postCategory(payload),
     mutationKey: ["create-category"],
@@ -16,7 +16,7 @@ export const createCategory = () => {
   return { mutations };
 };
 
-export const readCategories = (activeFilter) => {
+export const useReadCategories = (activeFilter) => {
   return useQuery({
     queryKey: ["categories", activeFilter],
     queryFn: async () => await getCategories(activeFilter),
@@ -27,11 +27,7 @@ export const readCategories = (activeFilter) => {
   });
 };
 
-<<<<<<< HEAD
-export const readCategoryById = (activeFilter) => {
-=======
-export const useReadCategoryById = (activeFilter, id) => {
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
+export const useReadCategoryById = (activeFilter) => {
   return useQuery({
     queryKey: ["category-by-id", id, activeFilter],
     queryFn: async () => await getCategoryById(activeFilter, id),
@@ -42,7 +38,7 @@ export const useReadCategoryById = (activeFilter, id) => {
   });
 };
 
-export const updatedCategory = () => {
+export const useUpdatedCategory = () => {
   const mutations = useMutation({
     mutationFn: async ({ payload, id }) => patchCategory({ payload, id }),
     mutationKey: ["put-category-by-id"],
@@ -51,21 +47,10 @@ export const updatedCategory = () => {
   return { mutations };
 };
 
-<<<<<<< HEAD
-export const deletedCategory = () => {
-  const mutations = useMutation({
-    mutationFn: async (id) => deleteCategory(id),
-    mutationKey: ["deleted-product"],
-=======
-export const useDeletedCategory = (refetchProducts, setOpen) => {
+export const useDeletedCategory = () => {
   const mutations = useMutation({
     mutationFn: async (id) => deleteCategory(id),
     mutationKey: ["deleted-category"],
-    onSuccess: () => {
-      refetchProducts()
-      setOpen(false)
-    }
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
   });
 
   return { mutations };

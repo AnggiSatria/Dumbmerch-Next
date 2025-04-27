@@ -18,10 +18,7 @@ import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import Cookies from "js-cookie";
 <<<<<<< HEAD
 import { useRouter } from "next/navigation";
-import { readCheckAuth } from "@/hooks";
-=======
 import { useReadCheckAuth } from "@/hooks";
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
 export default function Home() {
   const token = Cookies.get(`token`);
@@ -31,10 +28,11 @@ export default function Home() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading, isError } = useReadCheckAuth(activeFilter);
 
-  const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
-
+  const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;  
+  
+  
   const dataFake = [
     {
       name: "Login",
@@ -64,15 +62,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (token === undefined) {
-      return router.push(`/`);
-    } else {
-      if (checkUsers?.status === "customer") {
-        return router.push(`/${checkUsers?.id}/home`);
-      } else {
-        return router.push(`/${checkUsers?.id}/product`);
-      }
+    if (!isLoading) {
+        if (token === undefined || isError) {
+          return router.push(`/`);
+        } else {
+          if (checkUsers?.status === "customer") {
+            return window.location.href = `/${checkUsers?.id}/home` 
+          } else {
+            return window.location.href = `/${checkUsers?.id}/product`
+          }
+        }
     }
   }, [token, checkUsers]);
 =======

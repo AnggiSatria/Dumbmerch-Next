@@ -30,19 +30,19 @@ export async function POST(req) {
       where: { id: user.id },
       include: { profile: true },
     });
-    
+
     const parameter = {
       transaction_details: {
         order_id: newTransaction.id,
-        gross_amount: Number(newTransaction.price),
+        gross_amount: newTransaction.price,
       },
       credit_card: {
         secure: true,
       },
       customer_details: {
-        full_name: buyer?.name,
-        email: buyer?.email,
-        phone: buyer?.profile?.phone || "021",
+        full_name: buyer.name,
+        email: buyer.email,
+        phone: buyer.profile?.phone,
       },
     };
 
@@ -59,5 +59,3 @@ export async function POST(req) {
     return Response.json({ status: "failed", message: "Server Error" }, { status: 500 });
   }
 }
-
-

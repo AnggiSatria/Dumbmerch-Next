@@ -12,7 +12,7 @@ export async function getUserFromRequest(req) {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // GANTI biar konsisten
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: {
@@ -33,16 +33,14 @@ export async function getUserFromRequest(req) {
   }
 }
 
-export async function getTokenFromCookie() {
-  const cookieStore = await cookies(); // <- HARUS di-await sekarang
-  const tokenCookie = await cookieStore.get("token"); // ini juga di-await
-
-  const token = tokenCookie?.value;
+export function getTokenFromCookie() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token")?.value;
 
   if (!token) return null;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // pastikan JWT_SECRET ada di .env
     return decoded; // biasanya { id, email, name, ... }
   } catch (error) {
     console.error("Invalid token", error);

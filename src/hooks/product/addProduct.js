@@ -5,18 +5,11 @@ import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  createLogin,
-  createProduct,
-  createRegister,
-  readCheckAuth,
+  useCreateProduct,
+  useReadCheckAuth,
 } from "../query";
-import Cookies from "js-cookie";
-// import { createLogin } from "@/service";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-// import { useEffect } from "react";
-// import Cookies from "js-cookie";
-// import { useStoreUser } from "@/service/store/users";
 
 export default function useAddProduct() {
   //   const user = useStoreUser((state) => state);
@@ -25,13 +18,11 @@ export default function useAddProduct() {
   const [idCategoryList, setIdCategoryList] = useState([]);
 
   const joinIdCategory = idCategoryList?.join(", ");
-  console.log(joinIdCategory);
-
   const activeFilter = {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -90,13 +81,11 @@ export default function useAddProduct() {
     resolver: zodResolver(formSchema),
   });
 
-  const { mutations } = createProduct();
+  const { mutations } = useCreateProduct();
 
   const onSubmit = async (e) => {
     try {
       setLoading(true);
-
-      console.log(e);
       const formData = new FormData();
       formData.set("image", e.image, e.image.name);
       formData.set("name", e.name);
@@ -111,8 +100,6 @@ export default function useAddProduct() {
       if (response?.status === 200) {
         router.push(`/${checkUsers?.id}/product`);
       }
-      console.log(response);
-
       setLoading(false);
     } catch (error) {
       setLoading(false);

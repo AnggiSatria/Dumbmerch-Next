@@ -1,9 +1,9 @@
 "use client";
 
-import { readCheckAuth, readProducts } from "@/hooks";
+import { useReadCheckAuth, useReadProducts } from "@/hooks";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,16 +15,16 @@ import {
 } from "@/components/ui/select";
 import { useDebounce } from "@uidotdev/usehooks";
 import Navbar from "@/components/manual/Navbar";
+import Cookies from "js-cookie";
 
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
   const token = Cookies.get(`token`);
-  const router = useRouter()
   const activeFilter = {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading, isError } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -37,29 +37,26 @@ export default function page() {
   };
 
   const { data: dataProducts, isLoading: loadingProducts } =
-    readProducts(activeFilterProduct);
+    useReadProducts(activeFilterProduct);
 
   const getProducts = dataProducts && dataProducts?.data?.data?.products;
-
-  console.log(getProducts);
-
   const handleChange = (e) => {
     setKeyword(e.target.value);
   };
 
-   useEffect(() => {
-    if (isLoading) return;
-
-    if (token === undefined) {
-      return window.location.href = `/`
-    } else {
-        if (checkUsers?.status === "customer") {
-        return router.push(`/${checkUsers?.id}/home`) 
-      } else {
-        return router.push(`/${checkUsers?.id}/product`)
+    useEffect(() => {
+      if (!isLoading) {
+          if (isError) {
+            return window.location.href = `/`;
+          } else {
+            if (checkUsers?.status === "customer") {
+              return window.location.href = `/${checkUsers?.id}/home` 
+            } else {
+              return window.location.href = `/${checkUsers?.id}/product`
+            }
+          }
       }
-    }
-  }, [token, checkUsers]);
+    }, [token, checkUsers, isError]);
 
   return (
     <main className="w-full min-h-screen border border-white items-center flex py-5 flex-col gap-5">

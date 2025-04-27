@@ -1,12 +1,11 @@
 "use client";
 
 import Navbar from "@/components/manual/Navbar";
-import { readCheckAuth } from "@/hooks";
+import { useReadCheckAuth } from "@/hooks";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
-import { AiOutlineSend } from "react-icons/ai";
 
 let socket;
 
@@ -19,7 +18,7 @@ export default function Page() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -28,28 +27,53 @@ export default function Page() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
+  // useEffect(() => {
+  //   socket = io("http://localhost:5000/", {
+  //     auth: {
+  //       token: localStorage.getItem("token"),
+  //     },
+  //   });
+
+  //   socket.on("new message", () => {
+  //     socket.emit("load messages", contact?.id);
+  //   });
+
+  //   loadContact();
+  //   loadMessages();
+
+  //   socket.on("connect_error", (err) => {
+  //     console.error(err.message);
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [messages]);
+
   useEffect(() => {
-    socket = io("http://localhost:5000/", {
-      auth: {
-        token: localStorage.getItem("token"),
-      },
-    });
+  if (!contact?.id) return;
 
-    socket.on("new message", () => {
-      socket.emit("load messages", contact?.id);
-    });
+  socket = io("http://localhost:5000/", {
+    auth: {
+      token: localStorage.getItem("token"),
+    },
+  });
 
-    loadContact();
-    loadMessages();
+  socket.on("new message", () => {
+    socket.emit("load messages", contact.id);
+  });
 
-    socket.on("connect_error", (err) => {
-      console.error(err.message);
-    });
+  loadContact();
+  loadMessages();
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [messages]);
+  socket.on("connect_error", (err) => {
+    console.error(err.message);
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, [contact?.id]);
 
   const loadContact = () => {
     socket.emit("load customer contact");
@@ -75,7 +99,6 @@ export default function Page() {
           idSender: item.sender.id,
           message: item.message,
         }));
-        console.log(dataMessages);
         setMessages(dataMessages);
       } else {
         setMessages([]);

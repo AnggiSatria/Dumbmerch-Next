@@ -1,33 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { parseForm } from "@/lib/upload"; // ini dari lib kamu
 
-// Helper untuk serialize BigInt
-function serialize(obj) {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj === 'bigint') return obj.toString();
-  if (Array.isArray(obj)) return obj.map(serialize);
-  if (typeof obj === 'object') {
-    const serializedObj = {};
-    for (const key in obj) {
-      serializedObj[key] = serialize(obj[key]);
-    }
-    return serializedObj;
-  }
-  return obj;
-}
-
-// GET by id
-export async function GET(req, { params }) {
+// GET: Detail produk
+export async function GET(_, { params }) {
   try {
-    const { id } = params;
+    const id = parseInt(params.id);
 
     const product = await prisma.product.findUnique({
       where: { id },
       include: {
-        user: true,
-        CategoryProduct: {
+        user: { select: { id: true, name: true, email: true } },
+        categories: {
           include: {
             category: true,
           },
@@ -39,134 +23,130 @@ export async function GET(req, { params }) {
       return NextResponse.json({ status: "failed", message: "Product not found" }, { status: 404 });
     }
 
-    const serializedProduct = serialize(product);
+    product.image = process.env.PATH_FILE + product.image;
 
-    return NextResponse.json({
-      status: "success",
-      data: {
-        ...serializedProduct,
-        image: `${process.env.PATH_FILE}${serializedProduct.image}`,
-      },
-    });
-  } catch (error) {
-    console.error(error);
+    return NextResponse.json({ status: "success", data: product });
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
   }
 }
 
-// PUT (Update)
+// PUT: Update produk
+// export async function PUT(req, { params }) {
+//   try {
+//     const id = parseInt(params.id);
+//     const formData = await req.formData();
+
+//     const categoryId = formData.get("categoryId")?.split(",").map(Number).filter(Boolean) || [];
+//     const userId = 1; // Ganti dengan ambil user dari cookie / session kalau perlu
+//     const updateData = {
+//       name: formData.get("name"),
+//       desc: formData.get("desc"),
+//       price: parseInt(formData.get("price")),
+//       qty: parseInt(formData.get("qty")),
+//       idUser: userId,
+//     };
+
+//     const newImage = formData.get("image");
+//     if (newImage?.name) {
+//       updateData.image = newImage.name;
+//     }
+
+//     // Update produk
+//     await prisma.product.update({
+//       where: { id },
+//       data: updateData,
+//     });
+
+//     // Hapus relasi kategori lama
+//     await prisma.categoryProduct.deleteMany({
+//       where: { idProduct: id },
+//     });
+
+//     // Tambahkan relasi kategori baru
+//     if (categoryId.length > 0) {
+//       await prisma.categoryProduct.createMany({
+//         data: categoryId.map((catId) => ({
+//           idProduct: id,
+//           idCategory: catId,
+//         })),
+//       });
+//     }
+
+//     return NextResponse.json({
+//       status: "success",
+//       data: {
+//         id,
+//         ...updateData,
+//       },
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
+//   }
+// }
+
 export async function PUT(req, { params }) {
   try {
-    const { id } = params;
-    const formData = await req.formData();
-    const name = formData.get("name");
-    const desc = formData.get("desc");
-    const price = parseInt(formData.get("price"));
-    const qty = parseInt(formData.get("qty"));
-    const idCategory = formData.get("idCategory"); // format: "id1,id2,id3"
-    const imageFile = formData.get("image");
+    const id = parseInt(params.id);
+    const { fields, files } = await parseForm(req);
 
-    let updatedData = {
-      name,
-      desc,
-      price: BigInt(price),
-      qty,
+    const updateData = {
+      name: fields.name,
+      desc: fields.desc,
+      price: parseInt(fields.price),
+      qty: parseInt(fields.qty),
+      idUser: 1, // ganti sesuai cookie
     };
 
-    if (imageFile && imageFile.size > 0) {
-      const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-
-      const timestamp = Date.now();
-      const ext = path.extname(imageFile.name);
-      const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
-      const filePath = path.join(uploadsDir, safeName);
-
-      fs.writeFileSync(filePath, buffer);
-      updatedData.image = safeName;
+    if (files.image) {
+      updateData.image = files.image[0].newFilename;
     }
 
-    // Update Product
-    const product = await prisma.product.update({
+    await prisma.product.update({
       where: { id },
-      data: updatedData,
+      data: updateData,
     });
 
-    // Update CategoryProduct
-    if (idCategory) {
-      const categoriesArray = idCategory.split(",").map((catId) => ({
-        idCategory: catId,
-        idProduct: id,
-      }));
+    await prisma.categoryProduct.deleteMany({ where: { idProduct: id } });
 
-      // Hapus semua relasi lama
-      await prisma.categoryProduct.deleteMany({
-        where: { idProduct: id },
-      });
-
-      // Tambahkan relasi baru
+    const categoryId = fields.categoryId?.split(",").map(Number).filter(Boolean) || [];
+    if (categoryId.length > 0) {
       await prisma.categoryProduct.createMany({
-        data: categoriesArray,
+        data: categoryId.map((catId) => ({
+          idProduct: id,
+          idCategory: catId,
+        })),
       });
     }
-
-    const updatedProduct = await prisma.product.findUnique({
-      where: { id },
-      include: {
-        user: true,
-        CategoryProduct: {
-          include: {
-            category: true,
-          },
-        },
-      },
-    });
-
-    const serializedProduct = serialize(updatedProduct);
 
     return NextResponse.json({
       status: "success",
-      data: {
-        ...serializedProduct,
-        image: `${process.env.PATH_FILE}${serializedProduct.image}`,
-      },
+      data: { id, ...updateData },
     });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
   }
 }
 
-// DELETE
-export async function DELETE(req, { params }) {
+// DELETE: Hapus produk
+export async function DELETE(_, { params }) {
   try {
-    const { id } = params;
+    const id = parseInt(params.id);
 
-    const product = await prisma.product.findUnique({ where: { id } });
-    if (!product) {
-      return NextResponse.json({ status: "failed", message: "Product not found" }, { status: 404 });
-    }
-
-    // Hapus relasi CategoryProduct dulu (kalau tidak, error foreign key constraint)
     await prisma.categoryProduct.deleteMany({
       where: { idProduct: id },
     });
 
-    // Hapus produk
     await prisma.product.delete({
       where: { id },
     });
 
-    return NextResponse.json({
-      status: "success",
-      message: "Product deleted successfully",
-    });
-  } catch (error) {
-    console.error(error);
+    return NextResponse.json({ status: "success", data: { id } });
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
   }
 }

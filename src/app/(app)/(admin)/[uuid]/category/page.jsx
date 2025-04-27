@@ -4,8 +4,7 @@ import Navbar from "@/components/manual/Navbar";
 import Pagination from "@/components/manual/pagination";
 import TableData from "@/components/manual/table";
 import { Button } from "@/components/ui/button";
-<<<<<<< HEAD
-import { readCategories, readCheckAuth } from "@/hooks";
+import { useReadCategories, useReadCheckAuth } from "@/hooks";
 import { usePathname, useRouter } from "next/navigation";
 =======
 import { useReadCategories, useReadCheckAuth } from "@/hooks";
@@ -13,16 +12,14 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 >>>>>>> 76b2d72 (feat(developement-be): add profile update)
 import React, { useState } from "react";
 
-export default function page() {
+export default function Page() {
   const router = useRouter();
   const pathname = usePathname();
   const activeFilter = {
     keywords: "",
   };
-  const lastSegment = pathname.split('/').pop();
-  
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -37,7 +34,7 @@ export default function page() {
     data: dataCategories,
     isLoading: loadingCategories,
     refetch: refetchCategories,
-  } = readCategories(activeFilterCategory);
+  } = useReadCategories(activeFilterCategory);
 
   const listCategories = dataCategories && dataCategories?.data?.data;
 

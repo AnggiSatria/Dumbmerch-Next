@@ -1,7 +1,7 @@
 import { getProfiles } from "@/lib";
 import { useQuery } from "@tanstack/react-query";
 
-export const readProfiles = (activeFilter) => {
+export const useReadProfiles = (activeFilter) => {
   return useQuery({
     queryKey: ["profiles", activeFilter],
     queryFn: async () => await getProfiles(activeFilter),

@@ -7,7 +7,7 @@ import {
 } from "@/lib";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const createCategory = () => {
+export const useCreateCategory = () => {
   const mutations = useMutation({
     mutationFn: async (payload) => postCategory(payload),
     mutationKey: ["create-category"],
@@ -16,7 +16,7 @@ export const createCategory = () => {
   return { mutations };
 };
 
-export const readCategories = (activeFilter) => {
+export const useReadCategories = (activeFilter) => {
   return useQuery({
     queryKey: ["categories", activeFilter],
     queryFn: async () => await getCategories(activeFilter),
@@ -42,7 +42,7 @@ export const useReadCategoryById = (activeFilter, id) => {
   });
 };
 
-export const updatedCategory = () => {
+export const useUpdatedCategory = () => {
   const mutations = useMutation({
     mutationFn: async ({ payload, id }) => patchCategory({ payload, id }),
     mutationKey: ["put-category-by-id"],

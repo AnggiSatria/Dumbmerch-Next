@@ -1,12 +1,11 @@
 "use client";
 
 import Navbar from "@/components/manual/Navbar";
-import { readCheckAuth } from "@/hooks";
+import { useReadCheckAuth } from "@/hooks";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
-import { AiOutlineSend } from "react-icons/ai";
 
 let socket;
 
@@ -19,7 +18,7 @@ export default function Page() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -56,7 +55,6 @@ export default function Page() {
     socket.emit("load admin contact");
 
     socket.on("admin contact", (data) => {
-      console.log(data);
       let dataContacts = data.map((item) => ({
         ...item,
         message: "Click here to start message",
@@ -74,15 +72,12 @@ export default function Page() {
 
   // Menangani pesan yang diterima dari server
   useEffect(() => {
-    console.log(socket.on());
     socket.on("messages", (data) => {
-      console.log(data);
       if (data.length > 0) {
         const dataMessages = data.map((item) => ({
           idSender: item.sender.id,
           message: item.message,
         }));
-        console.log(dataMessages);
         setMessages(dataMessages);
       } else {
         setMessages([]);

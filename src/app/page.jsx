@@ -31,10 +31,11 @@ export default function Home() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading, isError } = useReadCheckAuth(activeFilter);
 
-  const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
-
+  const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;  
+  
+  
   const dataFake = [
     {
       name: "Login",

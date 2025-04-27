@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { FormatRupiah } from "@arismun/format-rupiah";
 
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
   const activeFilter = {
     keywords: "",
@@ -27,15 +27,12 @@ export default function page() {
 >>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
-
-  console.log(checkUsers);
-
   const activeFilters = {
     keywords: "",
   };
 
   const { data: dataTransaction, isLoading: loadingTransaction } =
-    readTransaction(activeFilters);
+    useReadTransaction(activeFilters);
 
   const transactionUsers =
 <<<<<<< HEAD
@@ -156,9 +153,9 @@ export default function page() {
                 My Transaction
               </div>
               <div className="flex w-full h-[460px] gap-3 overflow-y-auto flex-col">
-                {transactionUsers?.map((res) => {
+                {transactionUsers?.map((res, idx) => {
                   return (
-                    <div className="flex w-full min-h-[150px] bg-[#303030] rounded-md">
+                    <div key={idx} className="flex w-full min-h-[150px] bg-[#303030] rounded-md">
                       <div className="flex w-[80%] h-full p-[18px] gap-3">
                         <div className="flex w-[30%] h-full rounded-md">
                           <Image

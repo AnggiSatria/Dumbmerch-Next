@@ -1,6 +1,6 @@
 "use client";
 
-import { readCheckAuth, readProducts } from "@/hooks";
+import { useReadCheckAuth, useReadProducts } from "@/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/select";
 import { useDebounce } from "@uidotdev/usehooks";
 import Navbar from "@/components/manual/Navbar";
+import Cookies from "js-cookie";
 
-export default function page() {
+export default function Page() {
   const pathname = usePathname();
   const token = Cookies.get(`token`);
   const router = useRouter()
@@ -24,7 +25,7 @@ export default function page() {
     keywords: "",
   };
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading, isError } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 
@@ -37,12 +38,9 @@ export default function page() {
   };
 
   const { data: dataProducts, isLoading: loadingProducts } =
-    readProducts(activeFilterProduct);
+    useReadProducts(activeFilterProduct);
 
   const getProducts = dataProducts && dataProducts?.data?.data?.products;
-
-  console.log(getProducts);
-
   const handleChange = (e) => {
     setKeyword(e.target.value);
   };

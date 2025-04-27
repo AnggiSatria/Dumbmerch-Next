@@ -13,7 +13,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 >>>>>>> 76b2d72 (feat(developement-be): add profile update)
 import React, { useState } from "react";
 
-export default function page() {
+export default function Page() {
   const router = useRouter();
   const pathname = usePathname();
   const activeFilter = {
@@ -37,7 +37,7 @@ export default function page() {
     data: dataCategories,
     isLoading: loadingCategories,
     refetch: refetchCategories,
-  } = readCategories(activeFilterCategory);
+  } = useReadCategories(activeFilterCategory);
 
   const listCategories = dataCategories && dataCategories?.data?.data;
 

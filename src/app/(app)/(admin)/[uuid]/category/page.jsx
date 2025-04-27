@@ -4,13 +4,8 @@ import Navbar from "@/components/manual/Navbar";
 import Pagination from "@/components/manual/pagination";
 import TableData from "@/components/manual/table";
 import { Button } from "@/components/ui/button";
-<<<<<<< HEAD
-import { readCategories, readCheckAuth } from "@/hooks";
-import { usePathname, useRouter } from "next/navigation";
-=======
 import { useReadCategories, useReadCheckAuth } from "@/hooks";
-import { useParams, usePathname, useRouter } from "next/navigation";
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function Page() {
@@ -22,7 +17,7 @@ export default function Page() {
   const lastSegment = pathname.split('/').pop();
   
 
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
+  const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
 

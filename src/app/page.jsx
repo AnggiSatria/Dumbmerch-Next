@@ -16,12 +16,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import Cookies from "js-cookie";
-<<<<<<< HEAD
-import { useRouter } from "next/navigation";
-import { readCheckAuth } from "@/hooks";
-=======
 import { useReadCheckAuth } from "@/hooks";
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
 export default function Home() {
   const token = Cookies.get(`token`);
@@ -65,18 +60,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (token === undefined) {
-      return router.push(`/`);
-    } else {
-      if (checkUsers?.status === "customer") {
-        return router.push(`/${checkUsers?.id}/home`);
-      } else {
-        return router.push(`/${checkUsers?.id}/product`);
-      }
-    }
-  }, [token, checkUsers]);
-=======
     if (isLoading || !token || !checkUsers?.id) return;
 
     const redirectTo =
@@ -86,7 +69,6 @@ export default function Home() {
 
     window.location.href = redirectTo;
   }, [isLoading, token, checkUsers]);
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
   return (
     <main className="inline-flex lg:flex-row min-h-screen items-center lg:items-start bg-[#0a0a0a] w-full justify-center lg:justify-start lg:p-10">

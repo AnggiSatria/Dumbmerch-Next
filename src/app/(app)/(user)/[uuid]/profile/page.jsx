@@ -1,11 +1,7 @@
 "use client";
 
 import Navbar from "@/components/manual/Navbar";
-<<<<<<< HEAD
-import { readCheckAuth, readTransaction } from "@/hooks";
-=======
 import { useReadCheckAuth, useReadProfiles, useReadTransaction } from "@/hooks";
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -17,14 +13,10 @@ export default function Page() {
     keywords: "",
   };
 
-<<<<<<< HEAD
-  const { data: dataCheckAuth, isLoading } = readCheckAuth(activeFilter);
-=======
   const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
   const { data: dataProfiles } = useReadProfiles(activeFilter)
 
   const profiles = dataProfiles && dataProfiles?.data?.data?.profile
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
   const checkUsers = dataCheckAuth && dataCheckAuth?.data?.data?.user;
   const activeFilters = {
@@ -35,14 +27,8 @@ export default function Page() {
     useReadTransaction(activeFilters);
 
   const transactionUsers =
-<<<<<<< HEAD
-    dataTransaction && dataTransaction?.data?.data?.transaction;
-
-  console.log(transactionUsers);
-=======
     dataTransaction && dataTransaction?.data?.transactions;
     
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
   return (
     <main className="w-full min-h-screen flex flex-col items-center py-5 gap-5">

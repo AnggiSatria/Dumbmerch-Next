@@ -30,16 +30,9 @@ export default function TableData({
   checkUsers,
 }) {
   const router = useRouter();
-<<<<<<< HEAD
-  const pathname = usePathname();
-
-  const { mutations: mutationsProducts } = deletedProduct();
-  const { mutations: mutationsCategory } = deletedCategory();
-=======
   const [open, setOpen] = useState(false)
   const { mutations: mutationsProducts } = useDeletedProduct(refetchProducts, setOpen);
   const { mutations: mutationsCategory } = useDeletedCategory(refetchCategories, setOpen);
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
   return (
     <div className="overflow-x-auto">
@@ -118,10 +111,7 @@ export default function TableData({
                                       .mutateAsync(id)
                                       .then((res) => {
                                         console.log(res);
-<<<<<<< HEAD
-                                        refetchProducts();
-=======
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
+                                        
                                       })
                                       .catch((err) => {
                                         console.error(err);
@@ -189,11 +179,7 @@ export default function TableData({
                                       .mutateAsync(id)
                                       .then((res) => {
                                         console.log(res);
-<<<<<<< HEAD
-                                        refetchCategories();
-=======
                                         
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
                                       })
                                       .catch((err) => {
                                         console.error(err);

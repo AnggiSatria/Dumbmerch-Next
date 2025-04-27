@@ -47,11 +47,7 @@ export const useUpdatedProduct = () => {
   return { mutations };
 };
 
-<<<<<<< HEAD
-export const deletedProduct = () => {
-=======
 export const useDeletedProduct = (refetchProducts, setOpen) => {
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
   const mutations = useMutation({
     mutationFn: async (id) => deleteProduct(id),
     mutationKey: ["deleted-product"],

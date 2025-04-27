@@ -27,11 +27,7 @@ export const useReadCategories = (activeFilter) => {
   });
 };
 
-<<<<<<< HEAD
-export const readCategoryById = (activeFilter) => {
-=======
 export const useReadCategoryById = (activeFilter, id) => {
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
   return useQuery({
     queryKey: ["category-by-id", id, activeFilter],
     queryFn: async () => await getCategoryById(activeFilter, id),
@@ -51,12 +47,6 @@ export const useUpdatedCategory = () => {
   return { mutations };
 };
 
-<<<<<<< HEAD
-export const deletedCategory = () => {
-  const mutations = useMutation({
-    mutationFn: async (id) => deleteCategory(id),
-    mutationKey: ["deleted-product"],
-=======
 export const useDeletedCategory = (refetchProducts, setOpen) => {
   const mutations = useMutation({
     mutationFn: async (id) => deleteCategory(id),
@@ -65,7 +55,6 @@ export const useDeletedCategory = (refetchProducts, setOpen) => {
       refetchProducts()
       setOpen(false)
     }
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
   });
 
   return { mutations };

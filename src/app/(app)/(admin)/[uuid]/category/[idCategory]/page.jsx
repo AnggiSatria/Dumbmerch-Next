@@ -17,11 +17,6 @@ import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
-<<<<<<< HEAD
-export default function page() {
-  const pathname = usePathname();
-  const { form, onSubmit, loading, checkUsers, isLoading } = useEditCategory();
-=======
 export default function Page() {
     const {
       form,
@@ -32,7 +27,6 @@ export default function Page() {
       pathname,
       idCategory,
     } = useEditCategory();
->>>>>>> 76b2d72 (feat(developement-be): add profile update)
 
     const activeFilterCategoryById = {
       keywords: "",

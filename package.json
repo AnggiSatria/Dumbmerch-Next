@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -39,6 +39,8 @@
     "next-cloudinary": "^6.16.0",
     "nodemailer": "^6.10.1",
     "prisma": "^6.6.0",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0",
     "qs": "^6.12.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -12,7 +12,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    appDir: true, // ← Tambahkan ini supaya Next.js tahu kamu pakai App Router!
+    appDir: true,
   },
 };
 

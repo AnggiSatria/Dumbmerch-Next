@@ -5,13 +5,14 @@ import { useReadCheckAuth } from "@/hooks";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
-import { io } from "socket.io-client";
-
-let socket;
+import Pusher from "pusher-js"; // Import Pusher
 
 export default function Page() {
   let title = "Complain User";
-  document.title = "Dumbmerch | " + title;
+  
+  useEffect(() => {
+    document.title = "Dumbmerch | " + title;
+  }, [title]);
 
   const pathname = usePathname();
   const activeFilter = {
@@ -27,79 +28,93 @@ export default function Page() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
+  // Inisialisasi Pusher
   useEffect(() => {
-    // Inisialisasi socket.io client dengan token JWT
-    socket = io("http://localhost:5000/", {
-      auth: {
-        token: localStorage.getItem("token"),
-      },
+    if (!contact?.id) return;
+
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
     });
 
-    // Mengatur listener untuk event 'new message'
-    socket.on("new message", () => {
-      // Ketika ada pesan baru, memuat kembali pesan dari kontak yang dipilih
-      socket.emit("load messages", contact?.id);
+    // Subscribe ke channel chat untuk user yang dipilih
+    const channel = pusher.subscribe(`chat_${contact.id}`);
+
+    // Mendengarkan event 'new_message' yang dikirim oleh server
+    channel.bind("new_message", function(data) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          message: data.message,
+          senderId: data.senderId,
+          createdAt: data.createdAt,
+        },
+      ]);
     });
 
-    // Memuat kontak pertama kali saat komponen dimuat
-    loadContact();
-
-    // Membersihkan listener ketika komponen di-unmount
     return () => {
-      socket.disconnect();
+      pusher.unsubscribe(`chat_${contact.id}`);
     };
-  }, [contact]); // Bergantung pada perubahan pada 'contact'
+  }, [contact?.id]);
 
-  // Memuat daftar kontak dari server
   const loadContact = () => {
-    socket.emit("load admin contact");
-
-    socket.on("admin contact", (data) => {
-      let dataContacts = data.map((item) => ({
-        ...item,
-        message: "Click here to start message",
-      }));
-      setContacts(dataContacts);
-    });
+    // Kirim request ke backend untuk mendapatkan kontak
+    fetch("/api/v1/users?status=seller")
+      .then((res) => res.json())
+      .then((data) => {
+        const dataContacts = data.map((item) => ({
+          ...item,
+          message: "Click here to start message",
+        }));
+        setContacts(dataContacts);
+      })
+      .catch((err) => console.error(err));
   };
 
-  // Menangani klik pada kontak untuk memulai chat
+  useEffect(() => {
+    loadContact(); // Panggil loadContact saat komponen pertama kali dimuat
+  }, []);
+
   const onClickContact = (data) => {
     setContact(data);
-    // Memuat pesan dari kontak yang dipilih
-    socket.emit("load messages", data.id);
+    loadMessages(checkUsers?.id, data.id);
   };
 
-  // Menangani pesan yang diterima dari server
-  useEffect(() => {
-    socket.on("messages", (data) => {
-      if (data.length > 0) {
-        const dataMessages = data.map((item) => ({
+  const loadMessages = (idSender, idRecipient) => {
+    // Load pesan dari server
+    fetch(`/api/v1/chat?idSender=${idSender}&idRecipient=${idRecipient}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setMessages(data.map((item) => ({
           idSender: item.sender.id,
           message: item.message,
-        }));
-        setMessages(dataMessages);
-      } else {
-        setMessages([]);
-      }
-    });
+        })));
+      })
+      .catch((err) => console.error(err));
+  };
 
-    // Membersihkan listener ketika komponen di-unmount
-    return () => {
-      socket.off("messages");
-    };
-  }, [socket]); // Hanya perlu dijalankan sekali saat komponen dimuat
-
-  // Menangani pengiriman pesan
   const onSendMessage = (e) => {
-    if (e.key === "Enter" && e.target.value.trim() !== "") {
-      const data = {
+    if (e.key === "Enter" && e.target.value.trim()) {
+       const data = {
+        idSender: checkUsers?.id,
         idRecipient: contact.id,
         message: e.target.value,
       };
 
-      socket.emit("send message", data);
-      e.target.value = "";
+      // Kirim pesan ke server untuk disimpan dan dikirimkan ke Pusher
+      fetch("/api/chat", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Message sent:", data);
+      })
+      .catch((err) => console.error("Error sending message:", err));
+
+      e.target.value = ""; // Reset input
     }
   };
 
@@ -119,45 +134,33 @@ export default function Page() {
         <div className="flex w-3/12 h-[600px] border-r border-r-white pr-3 gap-3 flex-col">
           {contacts?.length > 0 && (
             <>
-              {contacts?.map((res, idx) => {
-                return (
-                  <div
-                    key={idx}
-                    onClick={() => {
-                      onClickContact(res);
-                    }}
-                    className={`flex w-full rounded-md h-[100px] cursor-pointer gap-3 items-center px-3 hover:bg-[#212121] ${
-                      contact?.id === res?.id ? `bg-[#3d3d3d]` : ``
-                    }`}
-                  >
-                    <div className="flex w-[30%] h-3/4 rounded-md cursor-pointer">
-                      <Image
-                        className="!h-full rounded-md shadow cursor-pointer"
-                        layout="responsive"
-                        alt="detail-product.png"
-                        src={res?.profile?.image || "/Frame.png"}
-                        width={75}
-                        height={75}
-                      />
-                    </div>
-
-                    <div className="flex h-3/4 flex-grow flex-col gap-3 cursor-pointer">
-                      <label
-                        htmlFor=""
-                        className="w-full h-1/2 flex items-center text-sm font-semibold text-[#F74D4D] cursor-pointer"
-                      >
-                        {res?.name}
-                      </label>
-                      <label
-                        htmlFor=""
-                        className="w-full h-1/2 flex items-center text-xs font-semibold text-[#ababab] cursor-pointer"
-                      >
-                        Click here to start messages
-                      </label>
-                    </div>
+              {contacts?.map((res, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => onClickContact(res)}
+                  className={`flex w-full rounded-full xl:rounded-md h-[100px] cursor-pointer gap-3 items-center px-3 hover:bg-[#212121] ${
+                    contact?.id === res?.id ? `bg-[#3d3d3d]` : ``}`}
+                >
+                  <div className="flex w-full h-full xl:w-[30%] xl:h-3/4 rounded-full xl:rounded-md cursor-pointer">
+                    <Image
+                      className="!h-full rounded-full xl:rounded-md shadow cursor-pointer object-cover"
+                      layout="responsive"
+                      alt="detail-product.png"
+                      src={res?.profile?.image || "/Frame.png"}
+                      width={75}
+                      height={75}
+                    />
                   </div>
-                );
-              })}
+                  <div className="hidden xl:flex h-3/4 flex-grow flex-col gap-3 cursor-pointer">
+                    <label className="w-full h-1/2 flex items-center text-sm font-semibold text-[#F74D4D] cursor-pointer">
+                      {res?.name}
+                    </label>
+                    <label className="w-full h-1/2 flex items-center text-xs font-semibold text-[#ababab] cursor-pointer">
+                      Click here to start messages
+                    </label>
+                  </div>
+                </div>
+              ))}
             </>
           )}
         </div>
@@ -166,16 +169,9 @@ export default function Page() {
           {contact ? (
             <div className="flex flex-col w-full h-full overflow-y-auto bg-gray-800 p-3">
               <div className="flex flex-col flex-grow">
-                {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`flex my-2 ${
-                      msg.idSender === checkUsers?.id
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
-                  >
-                    {msg.idSender !== checkUsers?.id && (
+                {messages?.map((msg, index) => (
+                  <div key={index} className={`flex my-2 ${msg?.idSender === checkUsers?.id ? "justify-end" : "justify-start"}`}>
+                    {msg?.idSender !== checkUsers?.id && (
                       <div className="flex items-end mr-2">
                         <Image
                           className="rounded-full"
@@ -186,16 +182,10 @@ export default function Page() {
                         />
                       </div>
                     )}
-                    <div
-                      className={`rounded-lg p-2 max-w-xs ${
-                        msg.idSender === checkUsers?.id
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-300 text-black"
-                      }`}
-                    >
-                      {msg.message}
+                    <div className={`rounded-lg p-2 max-w-xs ${msg?.idSender === checkUsers?.id ? "bg-blue-500 text-white" : "bg-gray-300 text-black"}`}>
+                      {msg?.message}
                     </div>
-                    {msg.idSender === checkUsers?.id && (
+                    {msg?.idSender === checkUsers?.id && (
                       <div className="flex items-end ml-2">
                         <Image
                           className="rounded-full"

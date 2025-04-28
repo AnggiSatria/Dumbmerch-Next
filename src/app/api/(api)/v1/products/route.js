@@ -59,12 +59,12 @@ export async function GET(req) {
       prisma.product.count({ where }),
     ]);
 
-    const productsWithImage = products.map((p) => ({
-      ...p,
-      image: process.env.PATH_FILE + p.image,
-    }));
+    // const productsWithImage = products.map((p) => ({
+    //   ...p,
+    //   image: process.env.PATH_FILE + p.image,
+    // }));
 
-    const serializedProducts = serialize(productsWithImage);
+    const serializedProducts = serialize(products);
 
     return NextResponse.json({
       status: "success",

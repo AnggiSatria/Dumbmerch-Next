@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 // Helper untuk serialize BigInt
 function serialize(obj) {
@@ -41,13 +42,19 @@ export async function GET(req, { params }) {
 
     const serializedProduct = serialize(product);
 
+    // return NextResponse.json({
+    //   status: "success",
+    //   data: {
+    //     ...serializedProduct,
+    //     image: `${process.env.PATH_FILE}${serializedProduct.image}`,
+    //   },
+    // });
+
     return NextResponse.json({
       status: "success",
-      data: {
-        ...serializedProduct,
-        image: `${process.env.PATH_FILE}${serializedProduct.image}`,
-      },
+      data: serializedProduct, // langsung
     });
+
   } catch (error) {
     console.error(error);
     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });
@@ -73,24 +80,34 @@ export async function PUT(req, { params }) {
       qty,
     };
 
-    if (imageFile && imageFile.size > 0) {
-      const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    // if (imageFile && imageFile.size > 0) {
+    //   const buffer = Buffer.from(await imageFile.arrayBuffer());
+    //   const uploadsDir = path.join(process.cwd(), "public", "uploads");
 
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
+    //   if (!fs.existsSync(uploadsDir)) {
+    //     fs.mkdirSync(uploadsDir, { recursive: true });
+    //   }
 
-      const timestamp = Date.now();
-      const ext = path.extname(imageFile.name);
-      const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
-      const filePath = path.join(uploadsDir, safeName);
+    //   const timestamp = Date.now();
+    //   const ext = path.extname(imageFile.name);
+    //   const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
+    //   const filePath = path.join(uploadsDir, safeName);
 
-      fs.writeFileSync(filePath, buffer);
-      updatedData.image = safeName;
-    }
+    //   fs.writeFileSync(filePath, buffer);
+    //   updatedData.image = safeName;
+    // }
 
     // Update Product
+
+    if (imageFile && imageFile.size > 0) {
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const timestamp = Date.now();
+      const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
+
+      const uploadResult = await uploadToCloudinary(buffer, safeName);
+      updatedData.image = uploadResult.secure_url; // ini URL Cloudinary
+    }
+    
     const product = await prisma.product.update({
       where: { id },
       data: updatedData,
@@ -128,13 +145,19 @@ export async function PUT(req, { params }) {
 
     const serializedProduct = serialize(updatedProduct);
 
+    // return NextResponse.json({
+    //   status: "success",
+    //   data: {
+    //     ...serializedProduct,
+    //     image: `${process.env.PATH_FILE}${serializedProduct.image}`,
+    //   },
+    // });
+
     return NextResponse.json({
       status: "success",
-      data: {
-        ...serializedProduct,
-        image: `${process.env.PATH_FILE}${serializedProduct.image}`,
-      },
+      data: serializedProduct, // langsung aja
     });
+
   } catch (error) {
     console.error(error);
     return NextResponse.json({ status: "failed", message: "Server Error" }, { status: 500 });

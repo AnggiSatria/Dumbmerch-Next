@@ -14,7 +14,7 @@ export default function Page() {
   };
 
   const { data: dataCheckAuth, isLoading } = useReadCheckAuth(activeFilter);
-  const { data: dataProfiles } = useReadProfiles(activeFilter)
+  const { data: dataProfiles, isLoading: loadingProfiles } = useReadProfiles(activeFilter)
 
   const profiles = dataProfiles && dataProfiles?.data?.data?.profile
 
@@ -51,7 +51,7 @@ export default function Page() {
                     className="!w-full !h-7/12 rounded-md shadow object-cover"
                     layout="responsive"
                     alt="detail-product.png"
-                    src={`${profiles?.image}` || "/assets/Frame.png"}
+                    src={loadingProfiles || profiles?.image === null ? "/assets/Frame.png" : `${profiles?.image}`}
                     width={300}
                     height={400}
                   />

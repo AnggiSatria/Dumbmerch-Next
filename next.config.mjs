@@ -8,6 +8,7 @@ const nextConfig = {
       "b65f-36-70-110-159",
       "b65f-36-70-110-159.ngrok-free.app",
       "http://localhost:3000/uploads",
+      "res.cloudinary.com"
     ],
   },
   experimental: {

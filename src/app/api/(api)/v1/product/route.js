@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 // Helper buat ubah semua BigInt di object jadi String
 function serialize(obj) {
@@ -39,22 +40,32 @@ export async function POST(req) {
       return NextResponse.json({ status: "failed", message: "Invalid token" }, { status: 401 });
     }
 
+    // let image = "";
+    // if (imageFile) {
+    //   const buffer = Buffer.from(await imageFile.arrayBuffer());
+    //   const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+    //   if (!fs.existsSync(uploadsDir)) {
+    //     fs.mkdirSync(uploadsDir, { recursive: true });
+    //   }
+
+    //   const timestamp = Date.now();
+    //   const ext = path.extname(imageFile.name);
+    //   const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
+    //   const filePath = path.join(uploadsDir, safeName);
+
+    //   fs.writeFileSync(filePath, buffer);
+    //   image = safeName;
+    // }
+
     let image = "";
     if (imageFile) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-
       const timestamp = Date.now();
-      const ext = path.extname(imageFile.name);
       const safeName = `${timestamp}-${imageFile.name}`.replace(/\s+/g, "-");
-      const filePath = path.join(uploadsDir, safeName);
 
-      fs.writeFileSync(filePath, buffer);
-      image = safeName;
+      const uploadResult = await uploadToCloudinary(buffer, safeName);
+      image = uploadResult.secure_url; // URL dari Cloudinary
     }
 
     const categoriesArray = idCategory
@@ -87,12 +98,16 @@ export async function POST(req) {
 
     const serializedProduct = serialize(product);
 
+    // return NextResponse.json({
+    //   status: "success",
+    //   data: {
+    //     ...serializedProduct,
+    //     image: `${process.env.PATH_FILE}${serializedProduct.image}`,
+    //   },
+    // });
     return NextResponse.json({
       status: "success",
-      data: {
-        ...serializedProduct,
-        image: `${process.env.PATH_FILE}${serializedProduct.image}`,
-      },
+      data: serializedProduct, // langsung
     });
   } catch (error) {
     console.error(error);

@@ -51,7 +51,7 @@ export default function Page() {
                     className="!w-full !h-7/12 rounded-md shadow object-cover"
                     layout="responsive"
                     alt="detail-product.png"
-                    src={`/uploads/${profiles?.image}` || "/assets/Frame.png"}
+                    src={`${profiles?.image}` || "/assets/Frame.png"}
                     width={300}
                     height={400}
                   />
@@ -148,7 +148,7 @@ export default function Page() {
                             className="!h-full rounded-md shadow object-cover"
                             layout="responsive"
                             alt={res?.product?.image}
-                            src={`/uploads/${res?.product?.image}` || "/Frame.png"}
+                            src={`${res?.product?.image}` || "/Frame.png"}
                             width={80}
                             height={150}
                           />
